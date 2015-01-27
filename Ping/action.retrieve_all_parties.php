@@ -1,6 +1,6 @@
 <?php
 if( !isset($gCms) ) exit;
-debug_display($params, 'Parameters');
+//debug_display($params, 'Parameters');
 require_once(dirname(__FILE__).'/function.calculs.php');
 require_once(dirname(__FILE__).'/include/prefs.php');
 
@@ -16,18 +16,13 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 
     while ($row= $dbresult->FetchRow())
       {
-	  $service = new Service();
+	$service = new Service();
 	$licence = $row['licence'];
 	$joueur = $row['joueur'];
-	
-	echo $licence." ".$joueur."<br />";
-	//echo "<td>".$row['licence']."</td>";
-
-//var_dump($result);
      
 /**/
-$result = $service->getJoueurParties("$licence");
-$i = 0;
+	$result = $service->getJoueurParties("$licence");
+	$i = 0;
 		foreach($result as $cle =>$tab)
 		{
 			$comptage = 0;
@@ -41,9 +36,10 @@ $i = 0;
 				
 				ping_admin_ops::ecrirejournal($now, $status, $designation, $action);
 			}
-			else{
-		
-			$licence = $tab[licence];
+			else
+			{
+			// le service est Ok, on continue
+			$licence2 = $tab[licence];
 			$advlic = $tab[advlic];
 			$vd = $tab[vd];
 	
@@ -55,7 +51,12 @@ $i = 0;
 				}
 		
 			$numjourn = $tab[numjourn];
-			if(is_array($numjourn)){$numjourn = '0';}
+			
+				if(is_array($numjourn))
+				{
+					$numjourn = '0';
+				}
+				
 			$codechamp = $tab[codechamp];
 			$dateevent = $tab[date];
 			$chgt = explode("/",$dateevent);
@@ -69,30 +70,35 @@ $i = 0;
 			$coefchamp = $tab[coefchamp];
 			$advclaof = $tab[advclaof];
 	
-/**/		$query = "SELECT licence,advlic, numjourn, codechamp, date_event, coefchamp FROM ".cms_db_prefix()."module_ping_parties WHERE licence = ? AND advlic = ? AND numjourn = ? AND codechamp = ? AND date_event = ? AND coefchamp = ?";
-		$dbresult = $db->Execute($query, array($licence, $advlic, $numjourn, $codechamp, $date_event, $coefchamp));
-		if($dbresult  && $dbresult->RecordCount() == 0) {
-			$query = "INSERT INTO ".cms_db_prefix()."module_ping_parties (id, licence, advlic, vd, numjourn, codechamp, date_event, advsexe, advnompre, pointres, coefchamp, advclaof) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-			$i++;
-			//echo $query;
-			$dbresultat = $db->Execute($query,array( $licence, $advlic, $vd, $numjourn, $codechamp, $date_event, $advsexe, $advnompre, $pointres, $coefchamp, $advclaof));
-		
-			if(!$dbresultat)
-				{
-					$designation = $db->ErrorMsg(); 
-					$status = 'Echec';
-					$action = 'retrieve_all_parties';
-					ping_admin_ops::ecrirejournal($now, $status, $designation, $action);
-				}
-				
-			}
+/**/			$query2 = "SELECT licence,advlic, numjourn, codechamp, date_event, coefchamp FROM ".cms_db_prefix()."module_ping_parties WHERE licence = ? AND advlic = ? AND numjourn = ? AND codechamp = ? AND date_event = ? AND coefchamp = ?";
+			$dbresult2 = $db->Execute($query2, array($licence2, $advlic, $numjourn, $codechamp, $date_event, $coefchamp));
 			
-		}//fin du else !is_array
+				if($dbresult2  && $dbresult2->RecordCount() == 0) 
+				{
+					$query3 = "INSERT INTO ".cms_db_prefix()."module_ping_parties (id, licence, advlic, vd, numjourn, codechamp, date_event, advsexe, advnompre, pointres, coefchamp, advclaof) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+					$i++;
+					//echo $query;
+					$dbresultat = $db->Execute($query3,array( $licence2, $advlic, $vd, $numjourn, $codechamp, $date_event, $advsexe, $advnompre, $pointres, $coefchamp, $advclaof));
+		
+						if(!$dbresultat)
+						{
+							$designation = $db->ErrorMsg(); 
+							$status = 'Echec';
+							$action = 'retrieve_all_parties';
+							ping_admin_ops::ecrirejournal($now, $status, $designation, $action);
+						}
+				
+				}
+			
+			}//fin du else !is_array
 		}//fin du foreach
 		$designation = "Inclusion de ".$i." résultats pour ".$joueur;
+		echo "$designation<br />";
 		$status = 'Ok';
 		$action = 'retrieve_all_parties';
 		ping_admin_ops::ecrirejournal($now,$status,$designation,$action);
+		unset($licence2);
+		unset($i);
 		/*$comptage = $i;
 		$designation = "Récupération de ".$comptage." parties de ".$player;
 		$query = "INSERT INTO ".cms_db_prefix()."module_ping_recup (id, datemaj, designation, action) VALUES ('', ?, ?, ?)";

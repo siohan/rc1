@@ -95,7 +95,6 @@ class Ping extends CMSModule
 	$this->SetParameterType('commune',CLEAN_STRING);
 	$this->SetParameterType('email',CLEAN_STRING);
 	$this->SetParameterType('confirm_email',CLEAN_STRING);
-	$this->SetParameterType('passe', CLEAN_STRING);
 	$this->SetParameterType('record_id', CLEAN_INT);
 	$this->SetParameterType('type_competition', CLEAN_STRING);
 	$this->SetParameterType('date_compet', CLEAN_NONE);
@@ -125,6 +124,7 @@ class Ping extends CMSModule
 	$this->SetParameterType('datecreated', CLEAN_STRING);
 	$this->SetParameterType('datemaj', CLEAN_STRING);
 	$this->SetParameterType('mois', CLEAN_INT);
+	$this->SetParameterType('month', CLEAN_STRING);
 	$this->SetParameterType('monthslist',CLEAN_INT);
 	$this->SetParameterType('annee', CLEAN_INT);
 	$this->SetParameterType('phase', CLEAN_INT);

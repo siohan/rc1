@@ -24,7 +24,7 @@ $dbretour = $db->Execute($query, array($licence));
 	else
 	{
 		$this->SetMessage("Joueur introuvable");
-		$this->RedirectToAdminTab('joueurs');
+		$this->RedirectToAdminTab('recup');
 	}
 
 
@@ -34,11 +34,11 @@ $service = new Service();
 $result = $service->getJoueurParties("$licence");
 
 
-	if (!is_array($result))
+	if (!is_array($result)|| count($result)==0)
 	{
 		//
 		$this->SetMessage('Pb accès résultat');
-		$this->RedirectToAdminTab('recuperation');
+		$this->RedirectToAdminTab('recup');
 	}
 	
 //var_dump($result);  
@@ -91,10 +91,10 @@ foreach($result as $cle =>$tab)
 	
 	if($dbresult  && $dbresult->RecordCount() == 0) 
 	{
-		$query = "INSERT INTO ".cms_db_prefix()."module_ping_parties (id, saison, licence, advlic, vd, numjourn, codechamp, date_event, advsexe, advnompre, pointres, coefchamp, advclaof) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		$query = "INSERT INTO ".cms_db_prefix()."module_ping_parties (id,datemaj, saison, licence, advlic, vd, numjourn, codechamp, date_event, advsexe, advnompre, pointres, coefchamp, advclaof) VALUES ('',?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		$i++;
 		//echo $query;
-		$dbresultat = $db->Execute($query,array($saison,$licence, $advlic, $vd, $numjourn, $codechamp, $date_event, $advsexe, $advnompre, $pointres, $coefchamp, $advclaof));
+		$dbresultat = $db->Execute($query,array($now,$saison,$licence, $advlic, $vd, $numjourn, $codechamp, $date_event, $advsexe, $advnompre, $pointres, $coefchamp, $advclaof));
 		
 			if(!$dbresultat)
 			{
@@ -140,7 +140,7 @@ $lignes = $dbresult->RecordCount();
 	}
 	
 	$this->SetMessage("$designation");
-	$this->RedirectToAdminTab('recuperation');
+	$this->RedirectToAdminTab('recup');
 
 #
 # EOF

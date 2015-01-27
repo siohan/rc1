@@ -32,11 +32,12 @@ if ($dbresult && $dbresult->RecordCount() > 0)
     while ($row= $dbresult->FetchRow())
       {
 	$actif = $row['actif'];
+	$licence = $row['licence'];
 	$onerow= new StdClass();
 	$onerow->rowclass= $rowclass;
 	$onerow->id= $row['id'];
 	$onerow->joueur= $row['joueur'];
-	$onerow->licence= $row['licence'];
+	$onerow->licence= $licence;
 	//$onerow->active= ($row['active'] == 1) ? $this->Lang('yes') : '';
 	$onerow->sit_mens= $row['sit_mens'];
 	$onerow->fftt= $row['fftt'];
@@ -51,13 +52,13 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	//$onerow->editlink= $this->CreateLink($id, 'unable_player', $returnid, 'Désactiver',array('licence'=>$row['licence']));
 	$onerow->sitmenslink= $this->CreateLink($id, 'retrieve_sit_mens', $returnid, $themeObject->DisplayImage('icons/system/import.gif', $this->Lang('retrieve_sit_mens'), '', '', 'systemicon')).
 $this->CreateLink($id, 'retrieve_sit_mens', $returnid, 
-	  $this->Lang('retrieve_sit_mens'), array('licence'=>$row['licence']));
+	  	$this->Lang('retrieve_sit_mens'), array('licence'=>$row['licence']));
 	$onerow->getpartieslink= $this->CreateLink($id, 'retrieve_parties', $returnid, $themeObject->DisplayImage('icons/system/import.gif', $this->Lang('retrieve_parties'), '', '', 'systemicon')).
 $this->CreateLink($id, 'retrieve_parties', $returnid, 
-	  $this->Lang('retrieve_parties'), array('licence'=>$row['licence']));
+	  	$this->Lang('retrieve_parties'), array('licence'=>$row['licence']));
 	$onerow->getpartiesspid= $this->CreateLink($id, 'retrieve_parties_spid', $returnid, $themeObject->DisplayImage('icons/system/import.gif', $this->Lang('retrieve_parties_spid'), '', '', 'systemicon')).
 $this->CreateLink($id, 'retrieve_parties_spid', $returnid, 
-	  $this->Lang('retrieve_parties_spid'), array('licence'=>$row['licence']));
+	  	$this->Lang('retrieve_parties_spid'), array('licence'=>$row['licence']));
 	//$onerow->deletelink= $this->CreateLink($id, 'delete_joueur', $returnid, $themeObject->DisplayImage('icons/system/delete.gif', $this->Lang('delete'), '', '', 'systemicon'), array('record_id'=>$row['id']), $this->Lang('delete_result_confirm'));
 	($rowclass == "row1" ? $rowclass= "row2" : $rowclass= "row1");
 	$rowarray[]= $onerow;
@@ -82,7 +83,7 @@ $smarty->assign('form2start',
 		$this->CreateFormStart($id,'mass_action',$returnid));
 $smarty->assign('form2end',
 		$this->CreateFormEnd());
-		$articles = array("Désactiver"=>"unable","Récupérer situation mensuelle"=>"situation", "Récupérer les parties du Spid"=>"spid", "Récupérer les parties FFTT"=>"fftt_parties");
+$articles = array("Désactiver"=>"unable","Récupérer situation mensuelle"=>"situation", "Récupérer les parties du Spid"=>"spid", "Récupérer les parties FFTT"=>"fftt_parties");
 $smarty->assign('actiondemasse',
 		$this->CreateInputDropdown($id,'actiondemasse',$articles));
 $smarty->assign('submit_massaction',

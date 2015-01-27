@@ -99,8 +99,8 @@ else
 		
 		//1 - on récupére le tour s'il existe
 		//on va fdonc chercher dans la table calendrier
-		$query = "SELECT numjourn FROM ".cms_db_prefix()."module_ping_calendrier WHERE date_debut = ? OR date_fin = ?";
-		$resultat = $db->Execute($query, array($date_event, $date_event));
+		$query = "SELECT DISTINCT numjourn FROM ".cms_db_prefix()."module_ping_calendrier WHERE name = ? date_debut = ? OR date_fin = ?";
+		$resultat = $db->Execute($query, array($epreuve,$date_event, $date_event));
 		
 			if ($resultat && $resultat->RecordCount()>0){
 				$row = $resultat->FetchRow();
@@ -112,7 +112,28 @@ else
 			}
 		
 		//2 - on récupère le coefficient de la compétition
-		$coeff = coeff($epreuve);
+		//Attention au critérium fédéral !!
+		
+			if($epreuve == 'Critérium fédéral')
+			{
+				//on va cherche rle bon coeff !!
+			
+				$query2 = "SELECT type_compet, coefficient FROM ".cms_db_prefix()."module_ping_participe AS p, ".cms_db_prefix()."module_ping_type_competitions AS tc WHERE p.type_compet = tc.code_compet AND p.licence = ?";
+				$dbresultat2 = $db->Execute($query2,array($licence));
+				
+				if ($dbresultat2 && $dbresultat2->RecordCount()>0)
+				{
+					$row2 = $resultat2->FetchRow();
+					$coeff = $row2['coefficient'];
+					//on a le type de compet, on peut chercher
+				}
+				
+			}
+			else
+			{
+				$coeff = coeff($epreuve);
+			}
+		
 		
 		//$pointres = $points*$coeff;
 		//fin du point 2
@@ -185,7 +206,7 @@ $dbresult = $db->Execute($query, array($now, $status,$designation,$action));
 		}
 	}	
 	$this->SetMessage("$designation");
-	$this->RedirectToAdminTab('recuperation');
+	$this->RedirectToAdminTab('recup');
 
 	}
 

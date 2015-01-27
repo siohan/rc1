@@ -1,5 +1,5 @@
 {if $itemscount>0}
-<p>La première colonne est celle du spid, la deuxième FFTT</p>
+<p>La première colonne est celle du spid, la deuxième FFTT | {$Corriger}</p>
 <table border="0" cellspacing="0" cellpadding="0" class="pagetable">
 	<thead>
 		<tr>
@@ -36,7 +36,7 @@
 			<td>{$entry->coeff_fftt}</td>
 			<td{if $entry->points_spid != $entry->points_fftt} style="background-color: red;"}{/if}>{$entry->points_spid}</td>
 			<td>{$entry->points_fftt}</td>
-			<td>{$entry->eraselink}</td>
+			<!--<td>{$entry->eraselink}</td>-->
 			
 		</tr>
 	{/foreach}
@@ -45,5 +45,6 @@
 			
 </table>
 {else}
-<p>Aucune erreur : {$returnlink}</p>
+<p>Aucune erreur </p>
 {/if}
+<p>{$returnlink}</p>

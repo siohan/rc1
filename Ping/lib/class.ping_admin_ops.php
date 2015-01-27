@@ -529,7 +529,7 @@ public static function retrieve_sit_mens($licence)
 	//on vérifie si la situation mensuelle a déjà été prise en compte
 	global $gCms;
 	$db = cmsms()->GetDb();
-	
+	$now = trim($db->DBTimeStamp(time()), "'");
 	$mois_courant = date('n');//Mois au format 1, 2, 3 etc....
 	$annee_courante = date('Y');
 	$mois_francais = array('Janvier', 'Février','Mars', 'Avril', 'Mai', 'Juin', 'Juillet','Août', 'Septembre', 'Octobre','Novembre','Décembre');
@@ -560,7 +560,7 @@ public static function retrieve_sit_mens($licence)
 			}
 			else{
 				//tout va bien on peut continuer
-				$licence = $result[licence];
+				$licence2 = $result[licence];
 				//	echo "la licence est $licence <br />";
 				$nom = $result[nom];
 				$prenom = $result[prenom];
@@ -582,7 +582,7 @@ public static function retrieve_sit_mens($licence)
 				
 				$query = "INSERT INTO ".cms_db_prefix()."module_ping_sit_mens (id,datecreated, datemaj, mois, annee, phase, licence, nom, prenom, points, clnat, rangreg,rangdep, progmois) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 				//echo $query;
-				$dbresultat = $db->Execute($query,array($now,$now,$mois_courant, $annee_courante, $phase, $licence, $nom, $prenom, $points, $clnat, $rangreg, $rangdep, $progmois));
+				$dbresultat = $db->Execute($query,array($now,$now,$mois_courant, $annee_courante, $phase, $licence2, $nom, $prenom, $points, $clnat, $rangreg, $rangdep, $progmois));
 
 					if(!$dbresultat)
 					{
@@ -600,7 +600,7 @@ public static function retrieve_sit_mens($licence)
 						ping_admin_ops::ecrirejournal($now,$status, $designation,$action);
 						//on met la table recup à jour pour le joueur
 						$query = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET datemaj = ? , sit_mens = ? WHERE licence = ?";
-						$dbresult = $db->Execute($query, array($now, $mois_sit_mens, $licence));
+						$dbresult = $db->Execute($query, array($now, $mois_sit_mens, $licence2));
 					}
 				
 				
@@ -788,7 +788,7 @@ public static function retrieve_parties_spid( $licence )
 }//fin de la fonction
 
 ##
-	public static function retrieve_indivs( $licence, $coefficient )
+	public static function retrieve_indivs( $licence, $coefficient, $type_compet )
 	  {
 		global $gCms;
 		$db = cmsms()->GetDb();
@@ -852,7 +852,7 @@ public static function retrieve_parties_spid( $licence )
 								$newclass = $classement;
 							}
 						//on va calculer la différence entre le classement de l'adversaire et le classement du joueur du club
-						$query = "SELECT points FROM ".cms_db_prefix()."module_ping_sit_mens WHERE licence = ? AND mois = ?";
+						$query = "SELECT points FROM ".cms_db_prefix()."module_ping_sit_mens WHERE  licence = ? AND mois = ?";
 						$dbresult = $db->Execute($query, array($licence,$mois_event));
 
 							if ($dbresult && $dbresult->RecordCount() == 0)
@@ -868,7 +868,6 @@ public static function retrieve_parties_spid( $licence )
 						//on calcule l'écart selon la grille de points de la FFTT
 						$type_ecart = ping_admin_ops::CalculEcart($ecart_reel);
 						$epreuve = $tab[epreuve];
-						//echo $ecart_reel;
 						// de quelle compétition s'agit-il ? 
 						//On a la date et le type d'épreuve
 						//on peut donc en déduire le tour via le calendrier
@@ -876,8 +875,8 @@ public static function retrieve_parties_spid( $licence )
 
 						//1 - on récupére le tour s'il existe
 						//on va fdonc chercher dans la table calendrier
-						$query = "SELECT numjourn FROM ".cms_db_prefix()."module_ping_calendrier WHERE date_debut = ? OR date_fin = ?";
-						$resultat = $db->Execute($query, array($date_event, $date_event));
+						$query = "SELECT DISTINCT numjourn FROM ".cms_db_prefix()."module_ping_calendrier WHERE type_compet = ? AND date_debut = ? OR date_fin = ?";
+						$resultat = $db->Execute($query, array($type_compet,$date_event, $date_event));
 
 							if ($resultat && $resultat->RecordCount()>0){
 								$row = $resultat->FetchRow();
@@ -888,15 +887,7 @@ public static function retrieve_parties_spid( $licence )
 								$numjourn = 0;
 							}
 
-						$numjourn = 0;
-						//2 - on récupère le coefficient de la compétition
-						//Attention, s'il s'agit du critérium fédéral
-						$coeff = ping_admin_ops::coeff($epreuve);
-						if($coeff == '0' && $epreuve =='Critérium fédéral')
-						{
-							$coeff = $coefficient;
-						}
-
+						
 						
 
 						$victoire = $tab[victoire];
@@ -915,7 +906,7 @@ public static function retrieve_parties_spid( $licence )
 						//echo "le coeff est : ".$coeff."<br />";
 						//echo "le type ecart est : ".$type_ecart."<br />";
 						//echo "les points 1 sont : ".$points1."<br />";
-						$pointres = $points1*$coeff;
+						$pointres = $points1*$coefficient;
 						$forfait = $tab[forfait];
 
 
@@ -927,7 +918,7 @@ public static function retrieve_parties_spid( $licence )
 							$query = "INSERT INTO ".cms_db_prefix()."module_ping_parties_spid (id, saison, datemaj, licence, date_event, epreuve, nom, numjourn,classement, victoire,ecart,type_ecart, coeff, pointres, forfait) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 							$i++;
 							//echo $query;
-							$dbresultat = $db->Execute($query,array($saison_courante,$now, $licence, $date_event, $epreuve, $nom, $numjourn, $newclass, $victoire,$ecart_reel,$type_ecart, $coeff,$pointres, $forfait));
+							$dbresultat = $db->Execute($query,array($saison_courante,$now, $licence, $date_event, $epreuve, $nom, $numjourn, $newclass, $victoire,$ecart_reel,$type_ecart, $coefficient,$pointres, $forfait));
 
 							if(!$dbresultat)
 								{

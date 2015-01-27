@@ -1,7 +1,7 @@
 <?php
 if (!isset($gCms)) exit;
 require_once(dirname(__FILE__).'/include/prefs.php');
-debug_display($params, 'Parameters');
+//debug_display($params, 'Parameters');
 $phase = $this->GetPreference('phase_en_cours');
 
 	if (!$this->CheckPermission('Ping Manage'))
@@ -14,6 +14,7 @@ $phase = $this->GetPreference('phase_en_cours');
 //on récupère les valeurs
 //pour l'instant pas d'erreur
 $error = 0;
+$i = 0;
 		
 		$licence = '';
 		if (isset($params['licence']) && $params['licence'] != '')
@@ -29,25 +30,30 @@ $error = 0;
 		{
 			$nom = $params['nom'];
 		}
-		else
-		{
-			$error++;
-		}
+		
 		$prenom = '';
 		if (isset($params['prenom']) && $params['prenom'] != '')
 		{
 			$prenom = $params['prenom'];
 		}
-		else
-		{
-			$error++;
-		}
+		
 		
 		$month = '';
 		if (isset($params['month']) && $params['month'] != '')
 		{
 			$month = $params['month'];
+			
+		}
+		
+		else
+		{
 			$error++;
+		}
+		
+		if($error>0)
+		{
+			$this->SetMessage('paramètres manquants');
+			$this->RedirectToAdminTab('situation');
 		}
 		foreach($month as $key=>$value)
 		{
@@ -57,21 +63,33 @@ $error = 0;
 			
 				if($dbresult && $dbresult->RecordCount()==0)
 				{
+					
+					
+					if( $value >0 )
+					{
+						
 					$query2 = "INSERT INTO ".cms_db_prefix()."module_ping_sit_mens (id, datecreated, datemaj, mois, annee, phase, licence, nom, prenom, points) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 					$dbresultat = $db->Execute($query2, array($now, $now, $key, $annee, $phase, $licence,$nom, $prenom,$value));
+					$i++;
+					}
 				}
-				
+				/*
 				elseif($dbresult->RecordCount()==1)
 				{
-					$query3 = "UPDATE ".cms_db_prefix()."module_ping_sit_mens SET points = ? WHERE licence = ? AND mois = ?";
-					$dbres = $db->Execute($query3, array($value,$licence,$key));
+					//Il y a déjà un enregistrement, est-il complet ?
+					
+					if($value >0)
+					{
+						$query3 = "UPDATE ".cms_db_prefix()."module_ping_sit_mens SET points = ? WHERE licence = ? AND mois = ?";
+						$dbres = $db->Execute($query3, array($value,$licence,$key));
+					}
 					
 				}
-				
+				*/
 		}
 
-
-$this->SetMessage('Situation modifiée !');
+$designation = $i." situation(s) modifiée(s)";
+$this->SetMessage("$designation");
 $this->RedirectToAdminTab('situation');
 
 ?>

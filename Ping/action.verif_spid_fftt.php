@@ -28,7 +28,7 @@ $rowarray = array();
 			$onerow->coeff_fftt = $row['coeff_fftt'];
 			$onerow->points_spid = $row['points_spid'];
 			$onerow->points_fftt = $row['points_fftt'];
-			$onerow->eraselink = $this->CreateLink($id, 'erase_spid', $returnid, $themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('edit'), '', '', 'systemicon'), array("record_id"=>$row['id'], "coefchamp"=>$row['coeff_fftt'],"numjourn"=>$row['numjourn_fftt'], "vd"=>$row['victoire_fftt'], "pointres"=>$row['points_fftt']));
+			//$onerow->eraselink = $this->CreateLink($id, 'erase_spid', $returnid, $themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('edit'), '', '', 'systemicon'), array("record_id"=>$row['id'], "coefchamp"=>$row['coeff_fftt'],"numjourn"=>$row['numjourn_fftt'], "vd"=>$row['victoire_fftt'], "pointres"=>$row['points_fftt']));
 			
 			
 			($rowclass =="row1" ?$rowclass="row2":$rowclass="row1");
@@ -41,6 +41,8 @@ $smarty->assign('itemscount',count($rowarray));
 $smarty->assign('itemsfoundtext', $this->Lang('resultsfoundtext'));
 $smarty->assign('returnlink',
 		$this->CreateReturnLink($id,$returnid,$contents = 'Retour'));
+$smarty->assign('Corriger',
+		$this->CreateLink($id,'cron_spid_fftt' , $returnid,$contents = 'Corriger tout'));
 echo $this->ProcessTemplate ('verif.tpl');
 #
 #EOF

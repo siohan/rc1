@@ -123,7 +123,10 @@ if($dbresult && $dbresult->RecordCount()>0)
 								$onerow2->retrieve_poule_rencontres= $this->CreateLink($id, 'retrieve_poule_rencontres', $returnid,$contents = 'MAJ', array('idpoule'=>$row2['idpoule'], 'iddiv'=>$row2['iddiv'], 'type_compet'=>$row['type_compet']));
 							}
 						}
+						if($date_event <= $date_courante)
+						{
 							$onerow2->retrieve_details = $this->CreateLink($id,'retrieve_details_rencontres2', $returnid,$themeObject->DisplayImage('icons/system/import.gif', $this->Lang('retrieveallpartiesspid'), '', '', 'systemicon'), array('record_id'=>$row2['id']));
+						}
 						
 					}
 
@@ -131,8 +134,8 @@ if($dbresult && $dbresult->RecordCount()>0)
 					{
 						$onerow2->deletelink= $this->CreateLink($id, 'delete', $returnid, $themeObject->DisplayImage('icons/system/delete.gif', $this->Lang('delete'), '', '', 'systemicon'), array('record_id'=>$row2['id'], 'type_compet'=>'poules'), $this->Lang('delete_confirm'));
 					}
-				//	if(isset($friendlyname) && $friendlyname !='')
-				//	{
+					if(isset($friendlyname) && $friendlyname !='')
+					{
 						if ($libequipe == $equa && isset($friendlyname) && $friendlyname !='' )
 						{
 							$onerow2->equa= $row2['friendlyname'];
@@ -142,10 +145,10 @@ if($dbresult && $dbresult->RecordCount()>0)
 							$onerow2->equa= $row2['equa'];
 						}
 					
-				//	}
-				//	else{
-				//		$onerow2->equa= $row2['equa'];
-				//	}
+					}
+					else{
+						$onerow2->equa= $row2['equa'];
+					}
 					if(isset($friendlyname) && $friendlyname !='')
 					{
 						if ($libequipe == $equb)
@@ -153,10 +156,10 @@ if($dbresult && $dbresult->RecordCount()>0)
 							$onerow2->equb= $row2['friendlyname'];
 						}
 
-					/*	else{
+						else{
 							$onerow2->equb= $row2['equb'];
 						}
-					*/
+					
 					}
 					else{
 						$onerow2->equb= $row2['equb'];

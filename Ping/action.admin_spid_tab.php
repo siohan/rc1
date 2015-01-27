@@ -3,7 +3,7 @@ if( !isset($gCms) ) exit;
 ##############################################################
 #              SPID                                          #
 ##############################################################
-//debug_display($params, 'Parameters');
+//	debug_display($params, 'Parameters');
 
 $saison = $this->GetPreference('saison_en_cours');
 
@@ -153,8 +153,10 @@ if ($dbresult && $dbresult->RecordCount() > 0)
       }
   }
 /**/
+$smarty->assign('cron_spid_fftt', 
+		$this->CreateLink($id, 'cron_spid_fftt', $returnid, 'Vérif Spid <-> FFTT'));
 $smarty->assign('verif_spid_fftt', 
-$this->CreateLink($id, 'verif_spid_fftt', $returnid, 'Vérif Spid <-> FFTT'));
+		$this->CreateLink($id, 'verif_spid_fftt', $returnid, 'Vérif Spid <-> FFTT'));
 $smarty->assign('itemsfound', $this->Lang('resultsfoundtext'));
 $smarty->assign('itemcount', count($rowarray));
 $smarty->assign('items', $rowarray);

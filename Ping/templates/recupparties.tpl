@@ -28,29 +28,26 @@ $(document).ready(function(){
 <table border="0" cellspacing="0" cellpadding="0" class="pagetable">
  <thead>
 	<tr>
-		<th>{$id}</th>
+		<th>Id</th>
 		<th>Joueur</th>
 		<th>Dernière Situation</th>
 		<th>Parties FFTT</th>
 		<th>Parties Spid</th>
-		<th colspan='4'>Actions</th>
+		<th colspan='3'>Actions</th>
 		<th><input type="checkbox" id="selectall" name="selectall"></th>
-  </tr>
+	</tr>
  </thead>
  <tbody>
 {foreach from=$items item=entry}
   <tr class="{$entry->rowclass}">
 	<td>{$entry->id}</td>
-	<td>{$entry->joueur}</td>
+	<td>{$entry->joueur}({$entry->licence})</td>
 	<td>{$entry->sit_mens}</td>
 	<td>{$entry->fftt}</td>
 	<td>{$entry->spid}</td>
     <td>{$entry->sitmenslink}</td>
 	<td>{$entry->getpartieslink}</td>
 	<td>{$entry->getpartiesspid}</td>
-	<td>{$entry->doedit}</td>
-<!--	<td>{$entry->deletelink}</td>
-	<td>{$entry->editlink}</td>-->
 	<td><input type="checkbox" name="{$actionid}sel[]" value="{$entry->licence}" class="select"></td>
   </tr>
 {/foreach}

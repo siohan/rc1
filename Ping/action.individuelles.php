@@ -34,14 +34,46 @@ $parms['saison'] = $saison_courante;
 					if($dbresultat2)
 					{
 						$row2 = $dbresultat2->FetchRow();
-						$name = $row2['name'];						
+						$name = $row2['name'];	
+						
+						//nouvelle conditionnelle, encore une !
+						//il faut distinguer le critérium fédéral jeunes et seniors
+
+							if($name =='Critérium fédéral' || $name=='Critérium fédéral Jeunes')
+							{
+								//on sélectionne uniquement les participants aux épreuves (N°licence) on utilise le code type_compet
+								$query4 = "SELECT licence FROM ".cms_db_prefix()."module_ping_participe WHERE type_compet = ?";
+								$dbresultat4 = $db->Execute($query4,array($type_compet));
+								$row4 = $dbresultat4->GetRows();
+								$lignes = $dbresultat4->RecordCount();
+								//echo $lignes."<br />";
+								//echo $row4[1][licence];
+								$lic = array();
+
+								for($i=0;$i<=$lignes;$i++)
+								{
+									array_push($lic,$row4[$i]['licence']);
+									$licen = substr(implode(", ", $lic), 0, -3);
+								}
+							//	var_dump($licen);
+
+								$name = 'Critérium fédéral';
+								$query.= " AND j.licence IN ($licen)";
+
+
+
+							}
+
+						
+											
 						$query.=" AND p.epreuve = ? AND p.numjourn = ?";
 						$parms['epreuve'] = $name;
 						$parms['numjourn'] = $numjourn;
 						
 						
 					}
-					else {
+					else 
+					{
 						
 						$message = $db->ErrorMsg();
 						echo "Pb Query".$message;
@@ -53,27 +85,60 @@ $parms['saison'] = $saison_courante;
 			else
 			{
 				//le N° de journée n'est pas configuré merde !
-				$query3 = "SELECT comp.name FROM ".cms_db_prefix."module_ping_calendrier AS cal, ".cms_db_prefix()."module_ping_type_competitions AS comp WHERE cal.type_compet = comp.code_compet AND cal.type_compet = ? ";
-				$dbresultat3 = $db->Execute($query3, array($type_compet, $numjourn));
+				$query3 = "SELECT DISTINCT comp.name FROM ".cms_db_prefix()."module_ping_calendrier AS cal, ".cms_db_prefix()."module_ping_type_competitions AS comp WHERE cal.type_compet = comp.code_compet AND cal.type_compet = ? ";
+				$dbresultat3 = $db->Execute($query3, array($type_compet));
 				
 					if($dbresultat3)
 					{
 						$row3 = $dbresultat3->FetchRow();
 						$name = $row3['name'];
 						$parms['epreuve'] = $name;
+						//echo $name;
 					}
+					//nouvelle conditionnelle, encore une !
+					//il faut distinguer le critérium fédéral jeunes et seniors
+					
+						if($name =='Critérium fédéral' || $name=='Critérium fédéral Jeunes')
+						{
+							//on sélectionne uniquement les participants aux épreuves (N°licence) on utilise le code type_compet
+							$query4 = "SELECT licence FROM ".cms_db_prefix()."module_ping_participe WHERE type_compet = ?";
+							$dbresultat4 = $db->Execute($query4,array($type_compet));
+							$row4 = $dbresultat4->GetRows();
+							$lignes = $dbresultat4->RecordCount();
+							//echo $lignes."<br />";
+							//echo $row4[1][licence];
+							$lic = array();
+							
+							for($i=0;$i<=$lignes;$i++)
+							{
+								array_push($lic,$row4[$i]['licence']);
+								$licen = substr(implode(", ", $lic), 0, -3);
+							}
+						//	var_dump($licen);
+					
+							$name = 'Critérium fédéral';
+							$query.= " AND j.licence IN ($licen)";
+							
 				
-				$query.=" AND p.epreuve = ? ";
+					
+						}
+						
+						$query.=" AND p.epreuve = ? ";
+						$parms['epreuve'] = $name;
+						
+				
 				
 			}
 		
 		//on récupère un tableau de journées possible
 	}
+	
 	if(isset($params['licence']) && $params['licence'] != '')
 	{
 		$query.=" AND j.licence = ? ";
 		$parms['licence']= $params['licence'];
 	}
+	
 	/*
 	if(isset($params['date_debut']) && $params['date_debut'] != '')
 	{
@@ -113,7 +178,7 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	$onerow= new StdClass();
 	$onerow->rowclass= $rowclass;
 	$onerow->epreuve= $row['epreuve'];
-	$onerow->joueur= $this->CreateLink($id, 'bar-charts2', $returnid, $row['joueur'],array('licence'=>$row['licence'])) ;
+	$onerow->joueur= $this->CreateLink($id, 'user_results', $returnid, $row['joueur'],array('licence'=>$row['licence'])) ;
 	$onerow->date_event= $row['date_event'];
 	$onerow->numjourn= $row['numjourn'];
 	$onerow->nom= $row['nom'];

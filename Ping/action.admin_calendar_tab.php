@@ -74,9 +74,9 @@ while ($dbresult && $row = $dbresult->FetchRow())
 $curdate = $this->GetPreference( 'dateChoisi' );
 $curstatus = $this->GetPreference('statusChoisie');
 $smarty->assign('phase2',
-		$this->CreateLink($id,'admin_teams_tab',$returnid, 'Phase 2', array("phase"=>"2") ));
+		$this->CreateLink($id,'admin_calendar_tab',$returnid, 'Phase 2', array("phase"=>"2") ));
 $smarty->assign('phase1',
-		$this->CreateLink($id,'admin_teams_tab',$returnid, 'Phase 1', array("phase"=>"1") ));
+		$this->CreateLink($id,'admin_calendar_tab',$returnid, 'Phase 1', array("phase"=>"1") ));
 $smarty->assign('prompt_tour',
 		$this->Lang('tour'));
 $smarty->assign('input_date',

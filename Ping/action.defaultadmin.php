@@ -23,7 +23,7 @@ if (FALSE == empty($params['active_tab']))
 	echo $this->SetTabHeader('spid', 'SPID' , ('results' == $tab)?true:false);
 	echo $this->SetTabHeader('compets', 'Compétitions' , ('compet' == $tab)?true:false);
 	
-	echo $this->SetTabHeader('poules', 'Résultats des poules', ('Résultats des poules' == $tab)?true:false);
+	echo $this->SetTabHeader('poules', 'Résultats', ('Résultats' == $tab)?true:false);
 	echo $this->SetTabHeader('recup', 'Recupération', ('Récupération' == $tab)?true:false);
 	echo $this->SetTabHeader('situation', 'Situation mensuelle', ('Situation mensuelle' == $tab)?true:false);
 	echo $this->SetTabHeader('journal', 'Journal', ('Journal' == $tab)?true:false);

@@ -37,7 +37,7 @@ $smarty->assign('retrieve_details_rencontres',
 		$this->CreateLink($id, 'retrieve_club', $returnid, $contents = 'Récupérations du détail des rencontres'));
 
 /* on fait un formulaire de filtrage des résultats*/
-$smarty->assign('formstart',$this->CreateFormStart($id,'admin_data_tab')); 
+$smarty->assign('formstart',$this->CreateFormStart($id,'admin_journal_tab')); 
 $statuslist[$this->lang('allstatus')] ='';
 $datelist[$this->Lang('alldates')] = '';
 $typeCompet = array();
@@ -165,7 +165,7 @@ $smarty->assign('createlink',
 		$this->CreateLink($id, 'add_compte', $returnid, 
 				  $this->Lang('addnewsheet'), 
 				  array()));
-$smarty->assign('form2start',$this->CreateFormStart($id,'admin_data_tab',$returnid));
+$smarty->assign('form2start',$this->CreateFormStart($id,'admin_journal_tab',$returnid));
 $smarty->assign('form2end',$this->CreateFormEnd());
 $smarty->assign('submit_massdelete',
 		$this->CreateInputSubmit($id,'submit_massdelete',$this->Lang('delete_selected'),

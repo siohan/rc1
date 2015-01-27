@@ -51,13 +51,13 @@ foreach($result as $cle =>$tab)
 	$annee_date = $date_extract[2] + 2000;
 	$date_event = $annee_date."-".$date_extract[1]."-".$date_extract[0];
 	$uploaded = 0;//initialement mis à 0, indique si le détail des matchs a été uploadé ou non.
-	
+	//on regarde s'il s'agit d'une équipe de mon club ou non
 	$cluba = strpos($equa,$nom_equipes);
 	$clubb = strpos($equb,$nom_equipes);
 	
 		if ($cluba !== false || $clubb !== false)
 		{
-			$club = 1;
+			$club = 1;//equipe de mon club on affiche
 			$affichage = 1;
 		}
 		else
@@ -88,8 +88,8 @@ foreach($result as $cle =>$tab)
 		}
 		
 	//on vérifie si l'enregistrement est déjà là
-	$query = "SELECT lien, scorea, scoreb FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE lien = ? ";
-	$dbresult = $db->Execute($query, array($lien));
+	$query = "SELECT id,lien, scorea, scoreb FROM ".cms_db_prefix()."module_ping_poules_rencontres WHERE iddiv =? AND idpoule = ? AND date_event = ? AND equa = ? AND equb = ?";
+	$dbresult = $db->Execute($query, array($iddiv,$idpoule, $date_event,$equa,$equb));
 	
 	//il n'y a pas d'enregistrement auparavant, on peut continuer
 			
@@ -113,13 +113,14 @@ foreach($result as $cle =>$tab)
 			//il y a déjà un enregistrement, le score est-il à jour ?
 			$update = 1;
 			$row = $dbresult->FetchRow();
+			$id = $row['id'];
 			$scoreA = $row['scorea'];
 			$scoreB = $row['scoreb'];
 				
 				if($scoreA ==0 && $scoreB ==0)
 				{
-					$query3 = "UPDATE ".cms_db_prefix()."module_ping_poules_rencontres SET scorea = ?, scoreb = ? WHERE lien = ?";
-					$dbresultA = $db->Execute($query3, array($scorea, $scoreb, $lien));
+					$query3 = "UPDATE ".cms_db_prefix()."module_ping_poules_rencontres SET scorea = ?, scoreb = ? WHERE id = ?";
+					$dbresultA = $db->Execute($query3, array($scorea, $scoreb, $id));
 					
 					if(!$dbresultA)
 					{
@@ -171,7 +172,7 @@ if(!$dbresult)
 }
 	
 	$this->SetMessage("$designation");
-	$this->RedirectToAdminTab('equipes');
+	$this->RedirectToAdminTab('poules');
 /*	*/
 #
 # EOF
