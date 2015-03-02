@@ -121,7 +121,7 @@ foreach($result as $cle =>$tab)
 				{
 					$query3 = "UPDATE ".cms_db_prefix()."module_ping_poules_rencontres SET scorea = ?, scoreb = ? WHERE id = ?";
 					$dbresultA = $db->Execute($query3, array($scorea, $scoreb, $id));
-					
+					$i++;
 					if(!$dbresultA)
 					{
 						$designation.= $db->ErrorMsg();

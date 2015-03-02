@@ -4,7 +4,7 @@ if( !isset($gCms) ) exit;
 #              SPID                                          #
 ##############################################################
 //	debug_display($params, 'Parameters');
-
+require_once(dirname(__FILE__).'/function.calculs.php');
 $saison = $this->GetPreference('saison_en_cours');
 
 $db =& $this->GetDb();
@@ -20,12 +20,17 @@ $equipelist[$this->Lang('allequipes')] = '';
 $playerslist[$this->Lang('allplayers')] = '';
 $typeCompet = array();
 $typeCompet[$this->Lang('allcompet')] = '';
-$query = "SELECT *, pts.epreuve,pts.date_event, j.licence,pts.numjourn , CONCAT_WS(' ',j.nom, j.prenom) AS player FROM ".cms_db_prefix()."module_ping_parties_spid AS pts  , ".cms_db_prefix()."module_ping_joueurs AS j WHERE pts.licence  = j.licence AND pts.saison = ? ORDER BY j.nom ASC, pts.numjourn ASC";//"";
+$query = "SELECT pts.epreuve,pts.date_event, j.licence,pts.numjourn , CONCAT_WS(' ',j.nom, j.prenom) AS player FROM ".cms_db_prefix()."module_ping_parties_spid AS pts  , ".cms_db_prefix()."module_ping_joueurs AS j WHERE pts.licence  = j.licence AND pts.saison = ? ORDER BY pts.date_event ASC,player ASC, pts.numjourn ASC";//"";
 //echo $query;
 $dbresult = $db->Execute($query, array($saison));
 while ($dbresult && $row = $dbresult->FetchRow())
   {
-    $datelist[$row['date_event']] = $row['date_event'];
+    	/*
+	$date_evenement = $row['date_event'];
+	$date_fr = dateversfr($date_evenement,$delimiter = '-');
+	echo $date_fr;
+	*/
+	$datelist[$row['date_event']] = $row['date_event'];
     $playerslist[$row['player']] = $row['licence'];
 //$saisonslist[$row['saison']] = $row['saison'];
     //$equipelist[$row['equipe']] = $row['equipe'];
@@ -71,6 +76,8 @@ $smarty->assign('input_compet',
 		$this->CreateInputDropdown($id,'typeCompet',$typeCompet,-1,$curCompet));
 $smarty->assign('input_player',
 		$this->CreateInputDropdown($id,'playerslist',$playerslist,-1,$curplayer));
+$smarty->assign('input_error_only',
+		$this->CreateInputCheckbox($id,'error_only',1,1));
 $smarty->assign('submitfilter',
 		$this->CreateInputSubmit($id,'submitfilter',$this->Lang('filtres')));
 $smarty->assign('formend',$this->CreateFormEnd());
@@ -82,39 +89,35 @@ $query = "SELECT sp.id AS record_id,CONCAT_WS(' ',j.nom, j.prenom) AS joueur, sp
 
 $parms['saison'] = $saison;//si le filtre a été soumis
 
-if( isset($params['submitfilter'] )){
+if( isset($params['submitfilter'] ))
+{
 	if ($curdate !='')
 	{
 		$query .=" AND sp.date_event = ? ";
 		$parms['date_event'] = $curdate;
 		
 	}
-	/*
-	else {
-		$query.=" AND pts.numjourn >= 0 ";
-		$parms ='';
-	}
-	*/
+
 	if ($curplayer !='')
 	{
 		$query .=" AND sp.licence = ?";
 		$parms['licence'] = $curplayer;
 		
 	}
-	/*
-	else {
-		$query.=" AND pts.licence >= 0 ";
-		$parms ='';
+	
+	if ($curCompet !='')
+	{
+		$query.=" AND sp.epreuve = ?";
+		$parms['epreuve'] = $curCompet;
 	}
-	*/
-if ($curCompet !='')
-{
-	$query.=" AND sp.epreuve = ?";
-	$parms['epreuve'] = $curCompet;
+	if($params['error_only'])
+	{
+		$query.=" AND sp.classement = -sp.ecart ";
+	}
+
 }
 
 
-}
 
 $query.=" ORDER BY joueur ASC, sp.date_event ASC";
 

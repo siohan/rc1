@@ -1,3 +1,4 @@
+<p>{$itemscount} résultat(s) trouvé(s)</p>
 {if $itemscount>0}
 <p>La première colonne est celle du spid, la deuxième FFTT | {$Corriger}</p>
 <table border="0" cellspacing="0" cellpadding="0" class="pagetable">
@@ -22,8 +23,9 @@
 	<tbody>
 	{foreach from=$items item=entry}
 		<tr class="{$entry->rowclass}">
-			<td>{$entry->id}</td>
-			<td>{$entry->date_event|date_format:"%d/%m"}</td>
+			<td>{$entry->record_id}</td>
+			<td>{$entry->date_spid|date_format:"%d/%m"}</td>
+			<td>{$entry->date_fftt|date_format:"%d/%m"}</td>
 			<td>{$entry->licence_spid}</td>
 			<td>{$entry->licence_fftt}</td>
 			<td>{$entry->nom_spid}</td>

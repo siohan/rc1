@@ -163,9 +163,33 @@ switch($current_version)
 	$sqlarray = "ALTER TABLE ".cms_db_prefix()."module_ping_type_competitions ADD UNIQUE `ind_code_compet` (`code_compet`)";
 	$dict->ExecuteSQLArray($sqlarray);
 	
+case "0.1.1" : 	
 	
-	
-	
+	$dict = NewDataDictionary( $db );
+
+	// table schema description
+	$flds = "
+		id I(11) AUTO KEY,
+		datecreated ". CMS_ADODB_DT .",
+		datemaj ". CMS_ADODB_DT .",
+		mois I(2),
+		annee I(4),
+		phase I(1),
+		licence I(11),
+		categ C(10),
+		nom C(255),
+		prenom C(255),
+		points N(6.2),
+		clnat I(11),
+		rangreg I(11),
+		rangdep I(11),
+		progmois N(6.2)";
+
+	// create it. 
+	$sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_adversaires",
+					   $flds, 
+					   $taboptarray);
+	$dict->ExecuteSQLArray($sqlarray);
 
 }
 

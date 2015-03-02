@@ -169,7 +169,7 @@ $smarty->assign('createlink',
 		$this->CreateLink($id, 'add_compet', $returnid,
 				  $themeObject->DisplayImage('icons/system/newobject.gif', $this->Lang('add'), '', '', 'systemicon')).
 		$this->CreateLink($id, 'add_compet', $returnid, 
-				  $this->Lang('addnewsheet'), 
+				  $this->Lang('add'), 
 				  array()));
 $smarty->assign('form2start',$this->CreateFormStart($id,'admin_data_tab',$returnid));
 $smarty->assign('form2end',$this->CreateFormEnd());

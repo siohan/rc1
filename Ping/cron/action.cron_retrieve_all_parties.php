@@ -1,15 +1,18 @@
 <?php
-if( !isset($gCms) ) exit;
+//if( !isset($gCms) ) exit;
 //debug_display($params, 'Parameters');
 require_once(dirname(__FILE__).'/function.calculs.php');
 require_once(dirname(__FILE__).'/include/prefs.php');
-
+$saison = $this->GetPreference('saison_en_cours');
 $now = trim($db->DBTimeStamp(time()), "'");
-$query = "SELECT licence, CONCAT_WS(' ', nom, prenom) AS joueur FROM ".cms_db_prefix()."module_ping_joueurs WHERE actif = '1'";
-$dbresult = $db->Execute($query);
+$query = "SELECT licence FROM ".cms_db_prefix()."module_ping_recup_parties WHERE maj_fftt < NOW()-INTERVAL 3 DAY AND saison = ? ORDER BY maj_fftt DESC LIMIT 25 ";
+$dbresult = $db->Execute($query, array($saison));
+//on a donc les n licences pour faire la deuxième requete
+//on commence à boucler
+
 $rowclass= 'row1';
 $rowarray= array ();
-$cle_appel = random(10);
+
 
 if ($dbresult && $dbresult->RecordCount() > 0)
   {
@@ -24,9 +27,10 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 /**/
 	$result = $service->getJoueurParties("$licence");
 	$i = 0;
+	$comptage = 0;
 		foreach($result as $cle =>$tab)
 		{
-			$comptage = 0;
+			$comptage++;
 			
 			//on vérifie que le service est ok sinon on passe au suivant
 			if(!is_array($result) && count($result)==0)
@@ -96,15 +100,21 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 			}//fin du else !is_array
 		}//fin du foreach
 	
-	
+		//on peut faire la maj_fftt ici
+		
 		
 		$designation = "Inclusion de ".$i." résultats pour ".$joueur;
 		if($i==0)
 		{
 			$designation.=" Service coupé ? Licence absente ?";
 		}
-		echo "<li>".$designation."</li>";
-		echo "</ol>";
+		else
+		{
+			$date_maj = date('Y-m-d');
+			$query4 = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET maj_fftt = ?, fftt = ? WHERE licence = ? AND saison = ?";
+			$resultat = $db->Execute($query, array($date_maj, $comptage, $licence2, $saison_courante));
+		}
+		
 		$status = 'Ok';
 		$action = 'retrieve_all_parties';
 		ping_admin_ops::ecrirejournal($now,$status,$designation,$action);
@@ -114,7 +124,7 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 		
 	}//fin du while
 }//fin du if $dbresult
-else {echo "<p>Pas de joueurs actifs.</p>";}
+
 /**/
 /*	
 	$this->SetMessage($this->Lang('saved_record'));

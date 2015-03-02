@@ -1,6 +1,14 @@
 <?php
-
+#############################################################################
+###          RÉCUPERATION DE TOUTES LES SITUATIONS MENSUELLES             ###
+#############################################################################
 if( !isset($gCms) ) exit;
+//on vérifie les permissions
+if (!$this->CheckPermission('Ping Use'))
+{
+	echo $this->ShowErrors($this->Lang('needpermission'));
+	return;
+}
 //debug_display($params, 'Parameters');
 //require_once(dirname(__FILE__).'/function.calculs.php');
 $db=$gCms->GetDb();
@@ -16,8 +24,10 @@ $mois_sm = $mois_francais["$mois_reel"];
 $mois_sit_mens = $mois_sm." ".$annee_courante;
 
 $message = '';
+//je sélectionne toutes les licences du mois en question donc déjà renseignées
+// afin de ne récupérer que celles manquantes
 $query = "SELECT licence FROM ".cms_db_prefix()."module_ping_sit_mens WHERE mois = ? AND annee = ?";
-	
+//je les mets ensuite dans un tableau pour faire le NOT IN	
 
 $dbresult = $db->Execute($query, array($mois_courant, $annee_courante));
 $row = $dbresult->GetRows();

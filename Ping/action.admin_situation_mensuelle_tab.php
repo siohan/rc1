@@ -19,8 +19,8 @@ $annee_courante = date('Y');
 /* on fait un formulaire de filtrage des résultats*/
 $smarty->assign('formstart',$this->CreateFormStart($id,'admin_situation_mensuelle_tab')); 
 $saisonslist[$this->lang('allseasons')] ='';
-$monthslist[$this->Lang('allmonths')] = '';
-//$monthslist = array("Tous les mois"=>"","Juillet"=>"7", "Août"=>"8");
+//$monthslist[$this->Lang('allmonths')] = '';
+$monthslist = array("Tous les mois"=>"","Juillet"=>"7", "Août"=>"8");
 $yearslist = array("2014"=>"2014");
 $tourlist[$this->Lang('alltours')] = '';
 $equipelist[$this->Lang('allequipes')] = '';

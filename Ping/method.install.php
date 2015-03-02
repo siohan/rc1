@@ -200,6 +200,33 @@ $sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_sit_mens",
 				   $taboptarray);
 $dict->ExecuteSQLArray($sqlarray);
 
+//
+$dict = NewDataDictionary( $db );
+
+// table schema description
+$flds = "
+	id I(11) AUTO KEY,
+	datecreated ". CMS_ADODB_DT .",
+	datemaj ". CMS_ADODB_DT .",
+	mois I(2),
+	annee I(4),
+	phase I(1),
+	licence I(11),
+	categ C(10),
+	nom C(255),
+	prenom C(255),
+	points N(6.2),
+	clnat I(11),
+	rangreg I(11),
+	rangdep I(11),
+	progmois N(6.2)";
+			
+// create it. 
+$sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_adversaires",
+				   $flds, 
+				   $taboptarray);
+$dict->ExecuteSQLArray($sqlarray);
+
 $dict = NewDataDictionary( $db );
 
 // table schema description
@@ -323,6 +350,7 @@ $this->SetPreference('vicNorm300_399', '1');
 $this->SetPreference('vicNorm400_499', '0,5');
 $this->SetPreference('vicNormPlus500', '0');
 $this->SetPreference('LastRecupSpid', '');
+$this->SetPreference('LastRecupFftt', '');
 
 /* les victoires anormales */
 $this->SetPreference('vicAnorm0_24', '6');
@@ -375,19 +403,19 @@ $this->CreateEvent('OnUserDeleted');
 
 
 //on insère les éléments par défaut
-$insert_sql = "INSERT INTO ".cms_db_prefix()."module_ping_type_competitions (id, name, code_compet, coefficient) VALUES ('', ?, ?, ?)";
-$res = $db->Execute($insert_sql, array('Critérium fédéral Seniors', 'I', '1.25'));
-$res = $db->Execute($insert_sql, array('Critérium fédéral Jeunes', 'J', '1.00'));
-$res = $db->Execute($insert_sql, array('Chpt France par équipes masculin', '1', '1.00'));
-$res = $db->Execute($insert_sql, array('Chpt France par équipes féminin', '2', '1.00'));
-$res = $db->Execute($insert_sql, array('Coupe Nationale Vétérans', 'K', '0.75'));
-$res = $db->Execute($insert_sql, array('Championnats de France Vétérans', 'V', '1.00'));
-$res = $db->Execute($insert_sql, array('Championnat Jeunes', '+', '0.75'));
-$res = $db->Execute($insert_sql, array('Championnat jenues poussins benjamins', 'ECP', '1.25'));
-$res = $db->Execute($insert_sql, array('Interclubs jeunes', 'EIJ', '0.50'));
-$res = $db->Execute($insert_sql, array('Tournoi Rég - Dep', 'Z', '0.50'));
-$res = $db->Execute($insert_sql, array('Tournoi National et Internat.', 'T', '0.75'));
-$res = $db->Execute($insert_sql, array('Indéterminé.', 'U', '0.00'));
+$insert_sql = "INSERT INTO ".cms_db_prefix()."module_ping_type_competitions (id, name, code_compet, coefficient) VALUES ('', ?, ?, ?, ?)";
+$res = $db->Execute($insert_sql, array('Critérium fédéral Seniors', 'I', '1.25','1'));
+$res = $db->Execute($insert_sql, array('Critérium fédéral Jeunes', 'J', '1.00','1'));
+$res = $db->Execute($insert_sql, array('Chpt France par équipes masculin', '1', '1.00','0'));
+$res = $db->Execute($insert_sql, array('Chpt France par équipes féminin', '2', '1.00','0'));
+$res = $db->Execute($insert_sql, array('Coupe Nationale Vétérans', 'K', '0.75','0'));
+$res = $db->Execute($insert_sql, array('Championnats de France Vétérans', 'V', '1.00','1'));
+$res = $db->Execute($insert_sql, array('Championnat Jeunes', '+', '0.75','0'));
+$res = $db->Execute($insert_sql, array('Championnat jeunes poussins benjamins', 'ECP', '1.25','0'));
+$res = $db->Execute($insert_sql, array('Interclubs jeunes', 'EIJ', '0.50','0'));
+$res = $db->Execute($insert_sql, array('Tournoi Rég - Dep', 'Z', '0.50','1'));
+$res = $db->Execute($insert_sql, array('Tournoi National et Internat.', 'T', '0.75','1'));
+$res = $db->Execute($insert_sql, array('Indéterminé.', 'U', '0.00','0'));
 
 // put mention into the admin log
 $this->Audit( 0, 

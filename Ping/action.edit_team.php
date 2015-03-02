@@ -24,14 +24,11 @@ if( isset( $params['error'] ) )
 
 
 $record_id = '';
-if( !isset( $params['record_id'] ) || $params['record_id'] == '')    
+if( isset( $params['record_id'] ) || $params['record_id'] != '')    
 {
 	
-	$params['message'] = $this->Lang('error_insufficientparams');
-	    $params['error'] = 1;
-	$this->SetMessage("Paramètres manquants");
-	    $this->RedirectToAdminTab('equipes' );
-	    return;
+	$record_id = $params['record_id'];
+	    
 }
 
     // find the user
@@ -100,10 +97,6 @@ $query = "SELECT name, code_compet FROM ".cms_db_prefix()."module_ping_type_comp
 $dbresultat = $db->Execute($query);
 while ($dbresultat && $row = $dbresultat->FetchRow())
   {
-    //$datelist[$row['date_event']] = $row['date_event'];
-    //$playerslist[$row['player']] = $row['licence'];
-//$saisonslist[$row['saison']] = $row['saison'];
-    //$equipelist[$row['equipe']] = $row['equipe'];
     $typeCompet[$row['name']] = $row['code_compet'];
   }
 

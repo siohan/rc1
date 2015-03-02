@@ -19,8 +19,8 @@ if (FALSE == empty($params['active_tab']))
 	echo $this->SetTabHeader('joueurs', 'Joueurs', ('joueurs' == $tab)?true:false);
 	echo $this->SetTabHeader('equipes', 'Equipes', ('Equipes' == $tab)?true:false);
 	echo $this->SetTabHeader('calendrier', 'Calendrier', ('Calendrier' == $tab)?true:false);
-	echo $this->SetTabHeader('fftt', 'FFTT' , ('individuelles' == $tab)?true:false);
-	echo $this->SetTabHeader('spid', 'SPID' , ('results' == $tab)?true:false);
+	echo $this->SetTabHeader('fftt', 'FFTT' , ('fftt' == $tab)?true:false);
+	echo $this->SetTabHeader('spid', 'SPID' , ('spid' == $tab)?true:false);
 	echo $this->SetTabHeader('compets', 'Compétitions' , ('compet' == $tab)?true:false);
 	
 	echo $this->SetTabHeader('poules', 'Résultats', ('Résultats' == $tab)?true:false);

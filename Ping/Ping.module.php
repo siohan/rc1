@@ -30,10 +30,9 @@
 
 #-------------------------------------------------------------------------
 /**
- * Skeleton example class
  *
  * @author Claude SIOHAN
- * @since 1.0
+ * @since 0.1.1
  * @version $Revision: 3827 $
  * @modifiedby $LastChangedBy: wishy $
  * @lastmodified $Date: 2007-03-12 11:56:16 +0200 (Mon, 12 Mar 2007) $
@@ -44,7 +43,7 @@ class Ping extends CMSModule
   
   function GetName() { return 'Ping'; }   
   function GetFriendlyName() { return $this->Lang('friendlyname'); }   
-  function GetVersion() { return '0.1rc1'; }  
+  function GetVersion() { return '0.1.1'; }  
   function GetHelp() { return $this->Lang('help'); }   
   function GetAuthor() { return 'agi-webconseil'; } 
   function GetAuthorEmail() { return 'claude@agi-webconseil.fr'; }
@@ -171,6 +170,7 @@ public function HasCapability($capability, $params = array())
 public function get_tasks()
 {
    return new PingRecupSpidTask();
+   return new PingRecupFfttTask();
 }
    /*
 

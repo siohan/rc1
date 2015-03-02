@@ -1,5 +1,10 @@
 <?php
 if( !isset($gCms) ) exit;
+if (!$this->CheckPermission('Ping Use'))
+{
+	echo $this->ShowErrors($this->Lang('needpermission'));
+	return;
+}
 //debug_display($params, 'Parameters');
 //require_once(dirname(__FILE__).'/function.calculs.php');
 
@@ -91,10 +96,10 @@ foreach($result as $cle =>$tab)
 	
 	if($dbresult  && $dbresult->RecordCount() == 0) 
 	{
-		$query = "INSERT INTO ".cms_db_prefix()."module_ping_parties (id,datemaj, saison, licence, advlic, vd, numjourn, codechamp, date_event, advsexe, advnompre, pointres, coefchamp, advclaof) VALUES ('',?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		$query = "INSERT INTO ".cms_db_prefix()."module_ping_parties (id, saison, licence, advlic, vd, numjourn, codechamp, date_event, advsexe, advnompre, pointres, coefchamp, advclaof) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 		$i++;
 		//echo $query;
-		$dbresultat = $db->Execute($query,array($now,$saison,$licence, $advlic, $vd, $numjourn, $codechamp, $date_event, $advsexe, $advnompre, $pointres, $coefchamp, $advclaof));
+		$dbresultat = $db->Execute($query,array($saison,$licence, $advlic, $vd, $numjourn, $codechamp, $date_event, $advsexe, $advnompre, $pointres, $coefchamp, $advclaof));
 		
 			if(!$dbresultat)
 			{

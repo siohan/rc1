@@ -54,7 +54,7 @@ $dbresult = $db->Execute($query);
 			if($dbresultat && $dbresultat->RecordCount()>0)
 			{
 				
-				
+				$rowclass= 'row1';
 				
 				while($row2 = $dbresultat->FetchRow())
 				{
@@ -109,20 +109,20 @@ $dbresult = $db->Execute($query);
 						}
 
 					}
-					else{
+					else{ 
 						$onerow2->equb= $row2['equb'];
 					}
 					$onerow2->details= $this->CreateLink($id, 'retrieve_details_rencontres', $returnid, 'Détails', array('record_id'=>$row2['id'], 'template'=>'1'));
 					$rowarray2[] = $onerow2;
 					
 					
-				}
+				}//fin du deuxième while
 				$smarty->assign('prods_'.$i,$rowarray2);
 				unset($rowarray2);
 				
 				$rowarray[]  = $onerow;
 				$smarty->assign('items', $rowarray);
-			}
+			}// fin du if $dbresultat
 			
 			
 		}

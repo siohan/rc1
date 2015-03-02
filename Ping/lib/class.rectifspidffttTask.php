@@ -1,5 +1,5 @@
 <?php
-class PingRecupSpid implements CmsRegularTask
+class PingRecupSpidTask implements CmsRegularTask
 {
 
    public function get_name()
@@ -16,7 +16,7 @@ class PingRecupSpid implements CmsRegularTask
    {
 
       // Instantiation du module
-      $test = cms_utils::get_module('Test');
+      $ping = cms_utils::get_module('Ping');
 
       // Récupération de la dernière date d'exécution de la tâche
       if (!$time)
@@ -24,7 +24,7 @@ class PingRecupSpid implements CmsRegularTask
          $time = time();
       }
 
-      $last_execute = $test->GetPreference('MaVariableDeTestDeDerniereExecution');
+      $last_execute = $ping->GetPreference('LastRecupSpid');
       
       // Définition de la périodicité de la tâche (24h ici)
       if ( ($time - 24*60*60 ) >= $last_execute )
@@ -44,9 +44,10 @@ class PingRecupSpid implements CmsRegularTask
          $time = time();
       }
 
-      $test = cms_utils::get_module('Ping');
+      $ping = cms_utils::get_module('Ping');
       
       // Ce qu'il y a à exécuter ici
+//echo "coucou";
       
       return true; // Ou false si ça plante
 
@@ -60,15 +61,15 @@ class PingRecupSpid implements CmsRegularTask
          $time = time();
       }
       
-      $test = cms_utils::get_module('Ping');
-      $test->SetPreference('MaVariableDeTestDeDerniereExecution', $time);
-      $test->Audit('','Ping','Récup Spid Ok');
+      $ping = cms_utils::get_module('Ping');
+      $ping->SetPreference('LastRecupSpid', $time);
+      $ping->Audit('','Ping','Récup Spid Ok');
       
    }
 
    public function on_failure($time = '')
    {
-      $test->Audit('','Ping','Pas de récup SPID');
+      $ping->Audit('','Ping','Pas de récup SPID');
    }
 
 }

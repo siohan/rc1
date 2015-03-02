@@ -32,12 +32,12 @@ if ($dbresult && $dbresult->RecordCount() > 0)
     while ($row= $dbresult->FetchRow())
       {
 	$actif = $row['actif'];
-	$licence = $row['licence'];
+	//$licence = $row['licence'];
 	$onerow= new StdClass();
 	$onerow->rowclass= $rowclass;
 	$onerow->id= $row['id'];
 	$onerow->joueur= $row['joueur'];
-	$onerow->licence= $licence;
+	$onerow->licence= $row['licence'];
 	//$onerow->active= ($row['active'] == 1) ? $this->Lang('yes') : '';
 	$onerow->sit_mens= $row['sit_mens'];
 	$onerow->fftt= $row['fftt'];

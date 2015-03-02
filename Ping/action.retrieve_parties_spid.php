@@ -1,11 +1,14 @@
 <?php
+#################################################################################
+###           RECUPERATION DES PARTIES SPID                                   ###
+#################################################################################
 if( !isset($gCms) ) exit;
-debug_display($params, 'Parameters');
+//debug_display($params, 'Parameters');
 require_once(dirname(__FILE__).'/include/prefs.php');
 require_once(dirname(__FILE__).'/function.calculs.php');
 $now = trim($db->DBTimeStamp(time()), "'");
 $error = 0;
-//$result = $service->getJoueurParties("07290229");
+
 $licence = $params['licence'];
 $designation = '';
 $query = "SELECT CONCAT_WS(' ', nom, prenom) AS player FROM ".cms_db_prefix()."module_ping_joueurs WHERE licence = ?";
@@ -31,16 +34,31 @@ $result = $service->getJoueurPartiesSpid("$licence");
 //le service est-il ouvert ?
 /**/
 //on teste le resultat retourné     
+$lignes = count($result);//on compte le nb d'éléments du tableau
+//on compte le nb de résultats du spid présent ds la bdd pour le joueur
+$spid = ping_admin_ops::compte_spid($licence);
 
-if(!is_array($result)){
+//var_dump($spid);
+
+
+if(!is_array($result) || count($result)>0 ){
 	
 	
 		$this->SetMessage('Le service est coupé');
 		$this->RedirectToAdminTab('recuperation');	
 }
-else 
+elseif($lignes <=$spid)
 {
-
+	$designation.="Parties spid à jour : ". $spid ." parties en base et ". $lignes ." en ligne";
+	$this->SetMessage("$designation");
+	$this->RedirectToAdminTab('recuperation');
+}
+else
+{
+	//on teste un truc de guedin
+	//on supprime tous les enregistrements concernant le joueur ds la base de données pour les remplacer par les nouvelles
+	$query1 = "DELETE FROM ".cms_db_prefix()."module_ping_parties_spid WHERE saison = ? AND licence = ?";
+	$dbresult1 = $db->Execute($query1, array($saison_courante, $licence));
 	
 	$i = 0;
 	$compteur = 0;
@@ -51,7 +69,7 @@ else
 		$dateevent = $tab[date];
 		$chgt = explode("/",$dateevent);
 		$date_event = $chgt[2]."-".$chgt[1]."-".$chgt[0];
-		
+		$annee = '20'.$chgt[2];
 		//on extrait le mois pour retrouver la situation mensuelle
 			if (substr($chgt[1], 0,1)==0){
 				$mois_event = substr($chgt[1], 1,1);
@@ -63,18 +81,119 @@ else
 			}
 		
 		$nom = $tab[nom];
+		//on adapte son nom d'abord
+		$nom_global = get_name($nom);//une fonction qui permet d'extraire le nom et le prénom
+		$nom_reel = $nom_global[0];//le nom
+		$prenom_reel = $nom_global[1];//le prénom
+		//on va prendre 
+		//echo $nom_reel. ' '.$prenom_reel.'<br />';
 		$classement = $tab[classement];
 		$cla = substr($classement, 0,1);
+
+			
+		//Avec le nom on va aller chercher la situation mensuelle de l'adversaire
+		//on pourra la stocker pour qu'elle re-serve et l'utiliser pour affiner le calcul des points
+		//d'abord on va chercher ds la bdd si l'adversaire y est déjà pour le mois et la saison en question
+		$query4 = "SELECT points FROM ".cms_db_prefix()."module_ping_adversaires WHERE nom = ? AND prenom = ? AND mois = ? AND annee = ?";
+		//echo $query4.'<br />';
+		$dbresult4 = $db->Execute($query4, array($nom_reel,$prenom_reel,$mois_event,$annee));
 		
-			if($cla == 'N'){
-				$newclassement = explode('-', $classement);
-				$newclass = $newclassement[1];
-			}
-			else 
+			if($dbresult4 && $dbresult4->RecordCount()>0)//ok on a un enregistrement qui correspond
 			{
-				$newclass = $classement;
+				$row4 = $dbresult4->FetchRow();
+				$newclass = $row4['points'];
+			}
+			//deuxième cas : 
+			//on n'a pas d'enregistrement et on est dans le mois courant et l'année courante : on va chercher les points avec la classe pour ensuite l'insérer ds la bdd
+			elseif($dbresult4->RecordCount()==0 && $mois_event == date('n') && $annee = date('y'))
+			{
+				//on va chercher la sit mens du pongiste
+				
+				
+				$service = new Service();
+				$resultat = $service->getJoueursByName("$nom_reel", $prenom ="$prenom_reel");
+				//var_dump($resultat);
+				if(is_array($resultat) && count($resultat)>0 )
+				{//on a bien un tableau avec au moins un élément : c'est ok !
+
+						//on a un résultat ?
+						//echo "Glop";
+						//$compteur++;
+						$licen = $resultat[0][licence];//on a bien un numéro de licence, on peut donc récupérer la situation mensuelle en cours
+						//echo $licen.'<br />';
+						$service = new Service();
+						$resultat2 = $service->getJoueur("$licen");
+						
+						if(is_array($resultat2) && count($resultat2)>0)
+						{
+							$licence2 = $resultat2[licence];
+							$nom = $resultat2[nom];
+							//echo 'autre nom : '.$nom .' '.$prenom;
+							$prenom = $resultat2[prenom];
+							$natio = $resultat2[natio];
+							$clglob = $resultat2[clglob];
+							$point = $resultat2[point];
+							$aclglob = $resultat2[aclglob];
+							$apoint = $resultat2[apoint];
+							$clnat = $resultat2[clnat];
+							$categ = $resultat2[categ];
+							$rangreg = $resultat2[rangreg];
+							$rangdep = $resultat2[rangdep];
+							$valcla = $resultat2[valcla];
+							$clpro = $resultat2[clpro];
+							$valinit = $resultat2[valinit];
+							$progmois = $resultat2[progmois];
+							$progann = $resultat2[progann];
+						
+							//on insère le tout dans la bdd
+							$query5 = "INSERT INTO ".cms_db_prefix()."module_ping_adversaires (id,datecreated, datemaj, mois, annee, phase, licence, nom, prenom, points, clnat, rangreg,rangdep, progmois) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+							//echo $query5;
+							$dbresultat5 = $db->Execute($query5,array($now,$now,$mois_courant, $annee_courante, $phase, $licence2, $nom, $prenom, $point, $clnat, $rangreg, $rangdep, $progmois));
+								//On vérifie que l'insertion se passe bien
+							$newclass = $point;
+						}
+						else
+						{
+							if($cla == 'N'){
+								$newclassement = explode('-', $classement);
+								$newclass = $newclassement[1];
+							}
+							else 
+							{
+								$newclass = $classement;
+							}
+						}
+								
+							
+				}
+				else
+				{
+					//echo "Pas Glop";
+					if($cla == 'N'){
+						$newclassement = explode('-', $classement);
+						$newclass = $newclassement[1];
+					}
+					else 
+					{
+						$newclass = $classement;
+					}
+				}//fin du if is_array($resultat)
+			}
+			else
+			{
+				//troisième cas : 
+				//on n'a pas les points et on n'est pas dans le mois courant, on n'insère pas et on utilise le classement fourni
+				if($cla == 'N'){
+					$newclassement = explode('-', $classement);
+					$newclass = $newclassement[1];
+				}
+				else 
+				{
+					$newclass = $classement;
+				}
 			}
 			
+				
 		//on va calculer la différence entre le classement de l'adversaire et le classement du joueur du club
 		$query = "SELECT points FROM ".cms_db_prefix()."module_ping_sit_mens WHERE licence = ? AND mois = ?";//" AND saison = ?";
 		$dbresult = $db->Execute($query, array($licence,$mois_event));
@@ -123,7 +242,7 @@ else
 				
 				if ($dbresultat2 && $dbresultat2->RecordCount()>0)
 				{
-					$row2 = $resultat2->FetchRow();
+					$row2 = $dbresultat2->FetchRow();
 					$coeff = $row2['coefficient'];
 					//on a le type de compet, on peut chercher
 				}
@@ -158,16 +277,12 @@ else
 	
 //on autorise les doublons ?
 	
-		$query = "SELECT licence, date_event,nom FROM ".cms_db_prefix()."module_ping_parties_spid WHERE licence = ? AND date_event = ? AND nom = ?";
-	//echo $query;
-	$dbresult = $db->Execute($query, array($licence, $date_event,$nom));
-	
-		if($dbresult  && $dbresult->RecordCount() == 0) {
+		
 			$query2 = "INSERT INTO ".cms_db_prefix()."module_ping_parties_spid (id, saison, datemaj, licence, date_event, epreuve, nom, numjourn,classement, victoire,ecart,type_ecart, coeff, pointres, forfait) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 			
 			//echo $query;
 			$dbresultat = $db->Execute($query2,array($saison_courante,$now, $licence, $date_event, $epreuve, $nom, $numjourn, $newclass,$victoire,$ecart_reel,$type_ecart, $coeff,$pointres, $forfait));
-		
+			$i++;
 			if(!$dbresultat)
 				{
 					$designation.="Erreur query2 ";
@@ -175,13 +290,9 @@ else
 					$error++;
 				}
 			}
-			else 
-			{ 
-				echo "Partie déjà enregistrée";
-			}
+			
 		
-		}
-
+	
 $comptage = $i;
 $status = 'Parties SPID';
 $designation .= "Récupération spid de ".$comptage." parties sur ".$compteur."  de ".$player;
@@ -196,8 +307,8 @@ $dbresult = $db->Execute($query, array($now, $status,$designation,$action));
 	
 	if($compteur >0)
 	{
-	$query = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET spid = ? WHERE licence = ?";
-	$dbresult = $db->Execute($query, array($compteur,$licence));
+	$query = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET spid = ? WHERE licence = ? AND saison = ?";
+	$dbresult = $db->Execute($query, array($compteur,$licence,$saison_courante));
 	
 		if(!$dbresult)
 		{
@@ -205,15 +316,13 @@ $dbresult = $db->Execute($query, array($now, $status,$designation,$action));
 	
 		}
 	}	
-	$this->SetMessage("$designation");
-	$this->RedirectToAdminTab('recup');
+//	$this->SetMessage("$designation");
+//	$this->RedirectToAdminTab('recup');
 
 	}
 
 
 
-
-/**/
 #
 # EOF
 #

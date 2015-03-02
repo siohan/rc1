@@ -113,7 +113,7 @@ if($dbresult && $dbresult->RecordCount()>0)
 					{
 						$pb = 1;
 					}
-					if($uploaded== 0) 
+					if($uploaded == 0) 
 					{
 
 					 	if($pb==1) 
@@ -172,7 +172,7 @@ if($dbresult && $dbresult->RecordCount()>0)
 				}
 				
 				$smarty->assign('prods_'.$i,$rowarray2);
-				$smarty->assign('attention_img', '<img src="'. $this->GetModuleURLPath.'/images/warning.gif" alt="'.$this->Lang('new_topic_label').'" title="'.$this->Lang('new_topic_label').'" width="16" height="16" />');
+			//	$smarty->assign('attention_img', '<img src="'. $this->GetModuleURLPath.'/images/warning.gif" alt="'.$this->Lang('new_topic_label').'" title="'.$this->Lang('new_topic_label').'" width="16" height="16" />');
 				unset($rowarray2);
 			//	unset($valeur);
 			}

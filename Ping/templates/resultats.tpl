@@ -5,7 +5,7 @@
 {foreach from=$items item=entry}
 {*<p><pre>{$prods_{$compteur++}|var_dump}</pre></p>*}
 
-	{*$entry->valeur*}{if $entry->attention ==1}{$attention_img} ATTENTION !!  {/if}
+	{*$entry->valeur*}{*{if $entry->attention ==1}{$attention_img} ATTENTION !!  {/if}*}
 	{if $entry->indivs==0}
 	<h3>{$entry->date|date_format:"%d/%m/%Y"} {$entry->compet}</h3>
 	

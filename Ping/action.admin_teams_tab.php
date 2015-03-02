@@ -73,13 +73,13 @@ elseif( $this->GetPreference('phase_en_cours') == '2')
 				//$onerow->view= $this->createLink($id, 'viewteamresult', $returnid, $themeObject->DisplayImage('icons/system/view.gif', $this->Lang('download_poule_results'), '', '', 'systemicon'),array('cle'=>$row['cle'])) ;
 				
 				$onerow->editlink= $this->CreateLink($id, 'edit_team', $returnid, $themeObject->DisplayImage('icons/system/edit.gif', $this->Lang('edit'), '', '', 'systemicon'), array('record_id'=>$row['id']));
-				$onerow->addnewlink = $this->CreateLink($id, 'edit_team',$returnid, $themeObject->DisplayImage('icons/system/newobject.gif', $this->Lang('add'), '', '', 'systemicon'), array('record_id'=>$row['id']));
+				$onerow->addnewlink = $this->CreateLink($id, 'edit_team',$returnid, $themeObject->DisplayImage('icons/system/newobject.gif', $this->Lang('addmanually'), '', '', 'systemicon'), array('record_id'=>$row['id']));
 				
 				if($code != 'U')
 				{
 					//$calendrierimage = $themeObject->DisplayImage('icons/system/calendrier.jpg', $this->Lang('download_poule_results'),'','','systemicon');
 					$onerow->retrieve_poule_rencontres= $this->CreateLink($id, 'retrieve_poule_rencontres', $returnid,$calendarImage, array('idpoule'=>$row['idpoule'], 'iddiv'=>$row['iddiv'], 'type_compet'=>$row['type_compet']));
-					$onerow->classement = $this->CreateLink($id, 'getPouleClassement',$returnid,'Classement', array("iddiv"=>$row['iddiv'], "idpoule"=>$row['idpoule'], "record_id"=>$row['id'], "type_compet"=>$row['code_compet']));
+				//	$onerow->classement = $this->CreateLink($id, 'getPouleClassement',$returnid,'Classement', array("iddiv"=>$row['iddiv'], "idpoule"=>$row['idpoule'], "record_id"=>$row['id'], "type_compet"=>$row['code_compet']));
 				}
 				
 				if($this->CheckPermission('Ping Delete'))
@@ -99,6 +99,10 @@ elseif( $this->GetPreference('phase_en_cours') == '2')
 		$this->CreateLink($id, 'retrieve_teams', $returnid, $contents = "Récupération des équipes (championnat seniors)", array('type'=>'M')));
 		$smarty->assign('retrieve_teams_autres',
 				$this->CreateLink($id, 'retrieve_teams', $returnid, $contents = "Récupération des équipes"));
+		$smarty->assign('edit_team',
+				$this->CreateLink($id, 'edit_team',$returnid, $themeObject->DisplayImage('icons/system/newobject.gif', $this->Lang('add'), '', '', 'systemicon')).$this->CreateLink($id, 'edit_team', $returnid, 
+								  $this->Lang('addmanually'), 
+								  array()));
 
 
 

@@ -43,7 +43,7 @@ if($dbresult && $dbresult->RecordCount()>0)
 	while($row = $dbresult->FetchRow())
 	{
 		$licence = $row['licence'];
-		ping_admin_ops::retrieve_indivs($licence, $coefficient,$type_compet);
+		ping_admin_ops::retrieve_parties_spid($licence);
 	}
 }
 
