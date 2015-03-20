@@ -14,7 +14,7 @@ global $themeObject;
 $result= array ();
 //$query= "SELECT * FROM ".cms_db_prefix()."module_ping_points WHERE joueur = ? ORDER BY id ASC";
 //$query = "SELECT CONCAT_WS(' ' , j.nom, j.prenom) AS joueur, j.licence,sum(p.vd) AS victoires, sum(p.pointres) AS total, count(*) AS sur FROM ".cms_db_prefix()."module_ping_parties_spid as p, ".cms_db_prefix()."module_ping_joueurs AS j WHERE p.licence = j.licence AND p.saison = ? ";//GROUP BY joueur ORDER BY joueur";
-$query = "SELECT p.licence, p.date_event, p.epreuve, p.nom, p.numjourn, p.classement, p.victoire, p.ecart, p.pointres FROM ".cms_db_prefix()."module_ping_parties_spid as p, ".cms_db_prefix()."module_ping_type_competitions AS tc WHERE p.epreuve = tc.name AND tc.indivs = '1' AND p.saison = ? ";
+$query = "SELECT p.licence, p.date_event, p.epreuve, p.nom, p.numjourn, p.classement, p.victoire, p.ecart, p.pointres FROM ".cms_db_prefix()."module_ping_parties_spid as p WHERE p.saison = ? ";
 $parms['saison'] = $saison_courante;
 //echo $query;
 //y a t-il des options ?
@@ -28,18 +28,20 @@ $parms['saison'] = $saison_courante;
 			if(isset($params['tour']) && $params['tour'] !='')
 			{
 				$numjourn = $params['tour'];
-				$query2 = "SELECT cal.numjourn,comp.name FROM ".cms_db_prefix()."module_ping_calendrier AS cal, ".cms_db_prefix()."module_ping_type_competitions AS comp WHERE cal.type_compet = comp.code_compet AND cal.type_compet = ? AND cal.numjourn = ?";
+				$query2 = "SELECT cal.numjourn,comp.name, cal.date_debut, cal.date_fin FROM ".cms_db_prefix()."module_ping_calendrier AS cal, ".cms_db_prefix()."module_ping_type_competitions AS comp WHERE cal.type_compet = comp.code_compet AND cal.type_compet = ? AND cal.numjourn = ?";
 				$dbresultat2 = $db->Execute($query2, array($type_compet, $numjourn));
 				
 					if($dbresultat2)
 					{
 						$row2 = $dbresultat2->FetchRow();
 						$name = $row2['name'];	
+						$date_debut = $row2['date_debut'];
+						$date_fin = $row2['date_fin'];
 						
 						//nouvelle conditionnelle, encore une !
 						//il faut distinguer le critérium fédéral jeunes et seniors
 
-							if($name =='Critérium fédéral' || $name=='Critérium fédéral Jeunes')
+							if($name =='Critérium fédéral' || $name=='Critérium fédéral Jeunes' || $name=='Critérium fédéral Seniors')
 							{
 								//on sélectionne uniquement les participants aux épreuves (N°licence) on utilise le code type_compet
 								$query4 = "SELECT licence FROM ".cms_db_prefix()."module_ping_participe WHERE type_compet = ?";
@@ -58,7 +60,7 @@ $parms['saison'] = $saison_courante;
 							//	var_dump($licen);
 
 								$name = 'Critérium fédéral';
-								$query.= " AND j.licence IN ($licen)";
+								$query.= " AND p.licence IN ($licen)";
 
 
 
@@ -66,9 +68,10 @@ $parms['saison'] = $saison_courante;
 
 						
 											
-						$query.=" AND p.epreuve = ? AND p.numjourn = ?";
+						$query.=" AND p.epreuve = ? AND p.date_event BETWEEN  ? AND  ?";
 						$parms['epreuve'] = $name;
-						$parms['numjourn'] = $numjourn;
+						$parms['date_debut'] = $date_debut;
+						$parms['date_fin'] = $date_fin;
 						
 						
 					}
@@ -98,7 +101,7 @@ $parms['saison'] = $saison_courante;
 					//nouvelle conditionnelle, encore une !
 					//il faut distinguer le critérium fédéral jeunes et seniors
 					
-						if($name =='Critérium fédéral' || $name=='Critérium fédéral Jeunes')
+						if($name =='Critérium fédéral' || $name=='Critérium fédéral Jeunes' || $name == 'Critérium fédéral Seniors')
 						{
 							//on sélectionne uniquement les participants aux épreuves (N°licence) on utilise le code type_compet
 							$query4 = "SELECT licence FROM ".cms_db_prefix()."module_ping_participe WHERE type_compet = ?";
@@ -117,7 +120,7 @@ $parms['saison'] = $saison_courante;
 						//	var_dump($licen);
 					
 							$name = 'Critérium fédéral';
-							$query.= " AND j.licence IN ($licen)";
+							$query.= " AND p.licence IN ($licen)";
 							
 				
 					

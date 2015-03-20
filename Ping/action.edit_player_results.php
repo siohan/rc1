@@ -32,9 +32,13 @@ if( !isset( $params['record_id'] ) || $params['record_id'] == '')
 	    $this->Redirect( $id, 'defaultadmin', $returnid, $params );
 	    return;
 }
+else
+{
+	$record_id = $params['record_id'];
+}
 
     // find the user
-    $query = "SELECT * FROM ".cms_db_prefix()."module_ping_parties_spid AS s, ".cms_db_prefix()."module_type_competitions AS tc WHERE s.epreuve = tc.name AND s.id = ?";
+    $query = "SELECT * FROM ".cms_db_prefix()."module_ping_parties_spid AS s, ".cms_db_prefix()."module_ping_type_competitions AS tc WHERE s.epreuve = tc.name AND s.id = ?";
     $dbresult = $db->GetRow($query, array( $params['record_id'] ));
     if( !$dbresult)
       {

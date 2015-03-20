@@ -409,7 +409,7 @@ public static function compte_fftt($licence)
 	$db = cmsms()->GetDb();
 	$ping = cms_utils::get_module('Ping');
 	$saison = $ping->GetPreference('saison_en_cours');
-	$query = "SELECT count(*) AS fftt FROM ".cms_db_prefix()."module_ping_parties_fftt WHERE licence = ? AND saison = ?";
+	$query = "SELECT count(*) AS fftt FROM ".cms_db_prefix()."module_ping_parties WHERE licence = ? AND saison = ?";
 	$dbresult = $db->Execute($query, array($licence,$saison));
 	$row = $dbresult->FetchRow();
 	$fftt = $row['fftt'];
@@ -439,15 +439,29 @@ public static function search_player_licence($name)
 
 public static function get_name($nom)
 {
+	
 	$explosion = explode(' ',$nom);
 	$compteur = count($explosion);
 	$name = array();
 	$prenom = array();
+	//on fait qqs traitements pour les caractères accentués
+	
 	
 	$i =0;
 	foreach ($explosion as $testcase) {
-	$i++;	
-	  if (ctype_upper($testcase)) {
+	$i++;
+	//on nettoie les caractères qui posent problème
+	$testcase = strtr($testcase, array(
+	        'Š'=>'S', 'š'=>'s', 'Đ'=>'Dj', 'đ'=>'dj', 'Ž'=>'Z', 'ž'=>'z', 'Č'=>'C', 'č'=>'c', 'Ć'=>'C', 'ć'=>'c',
+	        'À'=>'A', 'Á'=>'A', 'Â'=>'A', 'Ã'=>'A', 'Ä'=>'A', 'Å'=>'A', 'Æ'=>'A', 'Ç'=>'C', 'È'=>'E', 'É'=>'E',
+	        'Ê'=>'E', 'Ë'=>'E', 'Ì'=>'I', 'Í'=>'I', 'Î'=>'I', 'Ï'=>'I', 'Ñ'=>'N', 'Ò'=>'O', 'Ó'=>'O', 'Ô'=>'O',
+	        'Õ'=>'O', 'Ö'=>'O', 'Ø'=>'O', 'Ù'=>'U', 'Ú'=>'U', 'Û'=>'U', 'Ü'=>'U', 'Ý'=>'Y', 'Þ'=>'B', 'ß'=>'Ss',
+	        'à'=>'a', 'á'=>'a', 'â'=>'a', 'ã'=>'a', 'ä'=>'a', 'å'=>'a', 'æ'=>'a', 'ç'=>'c', 'è'=>'e', 'é'=>'e',
+	        'ê'=>'e', 'ë'=>'e', 'ì'=>'i', 'í'=>'i', 'î'=>'i', 'ï'=>'i', 'ð'=>'o', 'ñ'=>'n', 'ò'=>'o', 'ó'=>'o',
+	        'ô'=>'o', 'õ'=>'o', 'ö'=>'o', 'ø'=>'o', 'ù'=>'u', 'ú'=>'u', 'û'=>'u', 'ý'=>'y', 'ý'=>'y', 'þ'=>'b',
+	        'ÿ'=>'y', 'Ŕ'=>'R', 'ŕ'=>'r',
+	    ));	
+	  if (ctype_upper(str_replace("'","",$testcase)) || $testcase =="-" || $testcase =="'") {
 	    $name[$i] = $testcase;
 		//echo "La chaîne".$i." $testcase ne contient que des majuscules.\n";
 	  } else {
@@ -457,10 +471,57 @@ public static function get_name($nom)
 	}
 	
 	$nom_final = implode(' ',$name);
+	/*
+	$nom_final = strtr($nom_final, array(
+	        'Š'=>'S', 'š'=>'s', 'Đ'=>'Dj', 'đ'=>'dj', 'Ž'=>'Z', 'ž'=>'z', 'Č'=>'C', 'č'=>'c', 'Ć'=>'C', 'ć'=>'c',
+	        'À'=>'A', 'Á'=>'A', 'Â'=>'A', 'Ã'=>'A', 'Ä'=>'A', 'Å'=>'A', 'Æ'=>'A', 'Ç'=>'C', 'È'=>'E', 'É'=>'E',
+	        'Ê'=>'E', 'Ë'=>'E', 'Ì'=>'I', 'Í'=>'I', 'Î'=>'I', 'Ï'=>'I', 'Ñ'=>'N', 'Ò'=>'O', 'Ó'=>'O', 'Ô'=>'O',
+	        'Õ'=>'O', 'Ö'=>'O', 'Ø'=>'O', 'Ù'=>'U', 'Ú'=>'U', 'Û'=>'U', 'Ü'=>'U', 'Ý'=>'Y', 'Þ'=>'B', 'ß'=>'Ss',
+	        'à'=>'a', 'á'=>'a', 'â'=>'a', 'ã'=>'a', 'ä'=>'a', 'å'=>'a', 'æ'=>'a', 'ç'=>'c', 'è'=>'e', 'é'=>'e',
+	        'ê'=>'e', 'ë'=>'e', 'ì'=>'i', 'í'=>'i', 'î'=>'i', 'ï'=>'i', 'ð'=>'o', 'ñ'=>'n', 'ò'=>'o', 'ó'=>'o',
+	        'ô'=>'o', 'õ'=>'o', 'ö'=>'o', 'ø'=>'o', 'ù'=>'u', 'ú'=>'u', 'û'=>'u', 'ý'=>'y', 'ý'=>'y', 'þ'=>'b',
+	        'ÿ'=>'y', 'Ŕ'=>'R', 'ŕ'=>'r',
+	    ));
+	*/
 	$prenom_final = implode(' ',$prenom);
+	/*
+	$prenom_final = strtr($prenom_final, array(
+	        'Š'=>'S', 'š'=>'s', 'Đ'=>'Dj', 'đ'=>'dj', 'Ž'=>'Z', 'ž'=>'z', 'Č'=>'C', 'č'=>'c', 'Ć'=>'C', 'ć'=>'c',
+	        'À'=>'A', 'Á'=>'A', 'Â'=>'A', 'Ã'=>'A', 'Ä'=>'A', 'Å'=>'A', 'Æ'=>'A', 'Ç'=>'C', 'È'=>'E', 'É'=>'E',
+	        'Ê'=>'E', 'Ë'=>'E', 'Ì'=>'I', 'Í'=>'I', 'Î'=>'I', 'Ï'=>'I', 'Ñ'=>'N', 'Ò'=>'O', 'Ó'=>'O', 'Ô'=>'O',
+	        'Õ'=>'O', 'Ö'=>'O', 'Ø'=>'O', 'Ù'=>'U', 'Ú'=>'U', 'Û'=>'U', 'Ü'=>'U', 'Ý'=>'Y', 'Þ'=>'B', 'ß'=>'Ss',
+	        'à'=>'a', 'á'=>'a', 'â'=>'a', 'ã'=>'a', 'ä'=>'a', 'å'=>'a', 'æ'=>'a', 'ç'=>'c', 'è'=>'e', 'é'=>'e',
+	        'ê'=>'e', 'ë'=>'e', 'ì'=>'i', 'í'=>'i', 'î'=>'i', 'ï'=>'i', 'ð'=>'o', 'ñ'=>'n', 'ò'=>'o', 'ó'=>'o',
+	        'ô'=>'o', 'õ'=>'o', 'ö'=>'o', 'ø'=>'o', 'ù'=>'u', 'ú'=>'u', 'û'=>'u', 'ý'=>'y', 'ý'=>'y', 'þ'=>'b',
+	        'ÿ'=>'y', 'Ŕ'=>'R', 'ŕ'=>'r',
+	    ));
+	*/
 	$result[0] = $nom_final;
 	$result[1] = $prenom_final;
 	return $result;	
+//end of function
+}
+// cette fonction recherche la situation mensuelle d'un joueur du club ds la bdd
+public static function get_sit_mens($licence, $mois_event, $annee)
+{
+	global $gCms;
+	$db = cmsms()->GetDb();
+	$ping = cms_utils::get_module('Ping');
+	$query = "SELECT points FROM ".cms_db_prefix()."module_ping_sit_mens WHERE licence = ? AND mois = ? AND annee = ?";
+	$dbresult = $db->Execute($query, array($licence,$mois_event,$annee));
+	//si la situation mensuelle du joueur du club n'existe pas ?
+	//alors on n'enregistre pas le résultat et on le signale
+		if ($dbresult && $dbresult->RecordCount() == 0)
+		{
+			//$designation.="Ecart non calculé";
+			$retour_sit_mens = 0;
+		}
+		else
+		{
+			$row = $dbresult->FetchRow();
+			$retour_sit_mens = $row['points'];
+		}
+	return $retour_sit_mens;
 //end of function
 }
 
@@ -605,35 +666,35 @@ public function coeff_ops($record_id, $coeff)
 		while ($dbresult && $row = $dbresult->FetchRow())
 		{
 			
-		$victoire = $row['victoire'];
-		$ecart = $row['type_ecart'];
-		echo $victoire;
-		echo $ecart;
-		$points1 = ping_admin_ops::CalculPointsIndivs($ecart,$victoire);
-		//$coeff = '1.00';
-		$pointres = $points1*$coeff;
-		echo $coeff;
-		echo $pointres;
-
-
-
-    		$query3 = "UPDATE ".cms_db_prefix()."module_ping_parties_spid SET coeff = ?, pointres = ? WHERE id = ?";
-    		$dbresult2 = $db->Execute($query3, array($coeff, $pointres, $record_id));
-	
-			if(!$dbresult2)
-			{
-				$designation = $db->ErrorMsg();
-				$status = 'Echec';
-				$action = 'mass_delete update recup';
-				$query4 = "INSERT INTO ".cms_db_prefix()."module_ping_recup (id, status, designation, action) VALUES ('', ?, ?, ?)";
-				$dbresult3 = $db->Execute($query4, array($status, $designation, $action));
-			}
-
+			$victoire = $row['victoire'];
+			$ecart = $row['type_ecart'];
+			echo $victoire;
+			echo $ecart;
+			$points1 = ping_admin_ops::CalculPointsIndivs($ecart,$victoire);
+			//$coeff = '1.00';
+			$pointres = $points1*$coeff;
+			echo $coeff;
+			echo $pointres;
+                
+                
+                
+    			$query3 = "UPDATE ".cms_db_prefix()."module_ping_parties_spid SET coeff = ?, pointres = ? WHERE id = ?";
+    			$dbresult2 = $db->Execute($query3, array($coeff, $pointres, $record_id));
+	        
+				if(!$dbresult2)
+				{
+					$designation = $db->ErrorMsg();
+					$status = 'Echec';
+					$action = 'mass_delete update recup';
+					$query4 = "INSERT INTO ".cms_db_prefix()."module_ping_recup (id, status, designation, action) VALUES ('', ?, ?, ?)";
+					$dbresult3 = $db->Execute($query4, array($status, $designation, $action));
+				}
+                
 		}//fin du while
   	
 
 
-}//fin de la fonction
+  }//fin de la fonction
 
 public static function duplicate($record_id)
 {
@@ -729,12 +790,12 @@ public static function retrieve_sit_mens($licence)
 	
 	//pas de bol la situation mensuelle est déjà présente
 	
+//	return $designation;
 	
 	
-	
-   }
+  }
 
-public static function retrieve_parties_spid( $licence )
+public function retrieve_parties_spid( $licence )
   {
 	global $gCms;
 	$db = cmsms()->GetDb();
@@ -747,9 +808,9 @@ public static function retrieve_parties_spid( $licence )
 	$query = "SELECT CONCAT_WS(' ', nom, prenom) AS player FROM ".cms_db_prefix()."module_ping_joueurs WHERE licence = ?";
 	$dbretour = $db->Execute($query, array($licence));
 	if ($dbretour && $dbretour->RecordCount() > 0)
-	  {
+	{
 	    while ($row= $dbretour->FetchRow())
-	      {
+		{
 		$player = $row['player'];
 		$service = new Service();
 		$result = $service->getJoueurPartiesSpid("$licence");
@@ -764,7 +825,8 @@ public static function retrieve_parties_spid( $licence )
 		//on compte le nb de résultats du spid présent ds la bdd pour le joueur
 		$spid = ping_admin_ops::compte_spid($licence);
 		
-			if(!is_array($result)){
+			if(!is_array($result))
+			{
 
 				$message = "Service coupé"; 
 				$status = 'Echec';
@@ -775,7 +837,7 @@ public static function retrieve_parties_spid( $licence )
 			}
 			elseif($lignes <= $number)
 			{
-				$message = "Résultats à jour pour ".$player." : ".$spid." en base de données ".$lignes." en ligne."; 
+				$message = "Résultats SPID à jour pour ".$player." : ".$spid." en base de données ".$lignes." en ligne."; 
 				$status = 'Echec';
 				$designation = $message;
 				$action = "mass_action";
@@ -786,6 +848,7 @@ public static function retrieve_parties_spid( $licence )
 			{
 				$i = 0;
 				$compteur = 0;
+				$a = 0;//ce compteur sert au parties non récupérées par sit mens vide
 				$query1 = "DELETE FROM ".cms_db_prefix()."module_ping_parties_spid WHERE saison = ? AND licence = ?";
 				$dbresult1 = $db->Execute($query1, array($saison_courante, $licence));
 				foreach($result as $cle =>$tab)
@@ -798,7 +861,8 @@ public static function retrieve_parties_spid( $licence )
 					$date_event = $chgt[2]."-".$chgt[1]."-".$chgt[0];
 					$annee = '20'.$chgt[2];
 					
-						if (substr($chgt[1], 0,1)==0){
+						if (substr($chgt[1], 0,1)==0)
+						{
 							$mois_event = substr($chgt[1], 1,1);
 							//echo "la date est".$date_event;
 						}
@@ -806,14 +870,22 @@ public static function retrieve_parties_spid( $licence )
 						{
 							$mois_event = $chgt[1];
 						}
-
+					//on va vérifier si on a la situation mensuelle du joueur du club à jour pour le mois en question
+					$retour_sit_mens = ping_admin_ops::get_sit_mens($licence,$mois_event,$annee);
+					if($retour_sit_mens==0)
+					{
+						$designation.="Situation du mois ".$mois_event." manquante pour ".$player;
+						$a++;
+					}
+					else
+					{
+						
 					$nom = $tab[nom];
 					//on adapte son nom d'abord
 					$nom_global = ping_admin_ops::get_name($nom);//une fonction qui permet d'extraire le nom et le prénom
-					$nom_reel = $nom_global[0];//le nom
+					$nom_reel1 = $nom_global[0];
+					$nom_reel = addslashes($nom_global[0]);//le nom					
 					$prenom_reel = $nom_global[1];//le prénom
-					//on va prendre 
-					//echo $nom_reel. ' '.$prenom_reel.'<br />';
 					$annee_courante = date('Y');
 					
 					$classement = $tab[classement];//classement fourni par le spid
@@ -823,7 +895,7 @@ public static function retrieve_parties_spid( $licence )
 						//d'abord on va chercher ds la bdd si l'adversaire y est déjà pour le mois et la saison en question
 						$query4 = "SELECT points FROM ".cms_db_prefix()."module_ping_adversaires WHERE nom = ? AND prenom = ? AND mois = ? AND annee = ?";
 						//echo $query4.'<br />';
-						$dbresult4 = $db->Execute($query4, array($nom_reel, $prenom_reel,$mois_event,$annee_courante));
+						$dbresult4 = $db->Execute($query4, array($nom_reel1, $prenom_reel,$mois_event,$annee_courante));
 
 							if($dbresult4 && $dbresult4->RecordCount()>0 && $dbresult4->RecordCount() <2)//ok on a un enregistrement qui correspond
 							{
@@ -832,7 +904,7 @@ public static function retrieve_parties_spid( $licence )
 							}
 							//deuxième cas : 
 							//on n'a pas d'enregistrement et on est dans le mois courant et l'année courante : on va chercher les points avec la classe pour ensuite l'insérer ds la bdd
-							elseif($dbresult4->RecordCount()==0 && $mois_event == date('n') && $annee = date('y'))
+							elseif($dbresult4->RecordCount()==0 && $mois_event == date('n') && $annee == date('Y'))
 							{
 								//on va chercher la sit mens du pongiste
 								
@@ -840,7 +912,7 @@ public static function retrieve_parties_spid( $licence )
 								$service = new Service();
 								$resultat = $service->getJoueursByName("$nom_reel", $prenom ="$prenom_reel");
 								//var_dump($resultat);
-								if(is_array($resultat) && count($resultat)>0)
+								if(is_array($resultat) && count($resultat)>0 && count($resultat)<2)
 								{//on a bien un tableau avec au moins un élément : c'est ok !
 
 										//on a un résultat ?
@@ -895,6 +967,10 @@ public static function retrieve_parties_spid( $licence )
 								}
 								else
 								{
+									if(count($resultat)>1)//homonymie, etc...
+									{
+										$designation.="Homonymie pour ".$player;
+									}
 									//echo "Pas Glop";
 									if($cla == 'N'){
 										$newclassement = explode('-', $classement);
@@ -922,12 +998,14 @@ public static function retrieve_parties_spid( $licence )
 					//on va calculer la différence entre le classement de l'adversaire et le classement du joueur du club
 					$query = "SELECT points FROM ".cms_db_prefix()."module_ping_sit_mens WHERE licence = ? AND mois = ? AND annee = ?";
 					$dbresult = $db->Execute($query, array($licence,$mois_event,$annee));
-
+					//si la situation mensuelle du joueur du club n'existe pas ?
+					//alors on n'enregistre pas le résultat et on le signale
 						if ($dbresult && $dbresult->RecordCount() == 0)
 						{
 							//$designation.="Ecart non calculé";
 							$ecart = 0;
 						}
+						
 
 					$row = $dbresult->FetchRow();
 					$points = $row[points];
@@ -1005,23 +1083,28 @@ public static function retrieve_parties_spid( $licence )
 					//on met à jour la date de maj des résultats SPID
 					
 					
-				
+					}//fin du if si la sit mens du joueur du club est dûment renseignée
 
 				}//fin du foreach
 				$aujourdhui = date('Y-m-d');
-				$query4 = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET maj_spid = ? WHERE licence = ? AND saison = ?";
-				$dbresult4 = $db->Execute($query4,array($aujourdhui,$licence,$saison_courante));
 				$comptage = $i;
+				$query4 = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET maj_spid = ?, spid = ?,spid_total = ? WHERE licence = ? AND saison = ?";
+				$dbresult4 = $db->Execute($query4,array($aujourdhui,$comptage,$compteur,$licence,$saison_courante));
+				
 				$status = 'Parties SPID';
-				$designation .= "Récupération spid de ".$comptage." parties sur ".$compteur."  de ".$player;
+				$designation .= $comptage." parties Spid sur ".$compteur."  de ".$player;
+				if($a >0)
+				{
+					$designation.= " ".$a." parties Spid non récupérées (situation mensuelle manquante)";
+				}
 				$action = "mass_action";
 				ping_admin_ops::ecrirejournal($now,$status, $designation,$action);
 
 			}//fin du if !is_array
 		}//fin du while
-
 	}//fin du if dbretour >0
 
+return $designation;
 
 
 
@@ -1029,8 +1112,7 @@ public static function retrieve_parties_spid( $licence )
 
 
 
-
-}//fin de la fonction
+  }//fin de la fonction
 ##
 ##
 ##
@@ -1048,9 +1130,9 @@ public static function retrieve_parties_fftt( $licence )
 	$query = "SELECT CONCAT_WS(' ', nom, prenom) AS player FROM ".cms_db_prefix()."module_ping_joueurs WHERE licence = ?";
 	$dbretour = $db->Execute($query, array($licence));
 	if ($dbretour && $dbretour->RecordCount() > 0)
-	  {
+	{
 	    while ($row= $dbretour->FetchRow())
-	      {
+		{
 		$player = $row['player'];
 		$service = new Service();
 		$result = $service->getJoueurParties("$licence");
@@ -1071,11 +1153,14 @@ public static function retrieve_parties_fftt( $licence )
 			}
 			elseif($lignes <= $fftt)
 			{
-				$message = "Parties FFTT à jour : ".$fftt." en base de données ".$lignes." en ligne."; 
+				$message = "Parties FFTT à jour pour ".$player." : ".$fftt." en base de données ".$lignes." en ligne."; 
 				$status = 'Echec';
 				$designation = $message;
 				$action = "mass_action";
 				ping_admin_ops::ecrirejournal($now,$status, $designation,$action);
+				$aujourdhui = date('Y-m-d');
+				$query = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET maj_fftt = ? WHERE licence = ? AND saison = ?";
+				$dbresult4 = $db->Execute($query, array($aujourdhui,$licence,$saison_courante));
 				
 				
 			}
@@ -1152,9 +1237,10 @@ public static function retrieve_parties_fftt( $licence )
 
 				}//fin du foreach
 				$aujourdhui = date('Y-m-d');
-				$query4 = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET maj_fftt = ? WHERE licence = ? AND saison = ?";
-				$dbresult4 = $db->Execute($query4, array($aujourdhui,$licence,$saison_courante));
 				$comptage = $i;
+				$query4 = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET maj_fftt = ?,fftt = ? WHERE licence = ? AND saison = ?";
+				$dbresult4 = $db->Execute($query4, array($aujourdhui,$comptage,$licence,$saison_courante));
+				
 				$status = 'Parties FFTT';
 				$designation .= "Récupération FFTT de ".$comptage." parties sur ".$compteur."  de ".$player;
 				$action = "mass_action";
@@ -1173,7 +1259,7 @@ public static function retrieve_parties_fftt( $licence )
 
 
 
-}//fin de la fonction
+  }//fin de la fonction
 
 public static function erase_spid ( $id, $coeff_fftt, $numjourn_fftt, $points_fftt)
 {

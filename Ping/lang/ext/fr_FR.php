@@ -63,6 +63,7 @@ $lang['link_view'] = 'Voir l&#039;enregistrement';
 $lang['lists'] = 'Listes';
 $lang['listsfoundtext'] = 'liste(s) trouv&eacute;e(s)';
 $lang['messages'] = 'messages';
+$lang['missing_sit_mens'] = 'Situation mensuelle manquante';
 $lang['name'] = 'Nom';
 $lang['needpermission'] = 'Vous n\'avez pas la permission d\'accéder';
 $lang['no'] = 'Non';
@@ -150,6 +151,9 @@ $lang['changelog'] = '<ul>
 <li>Récupération de tous les matchs pour remplir le calendrier</li>
 <li>Corrections de bogues et améliorations diverses</li>
 </ul>
+<li>Version 0.2</li>
+<ul><li>Implémentation des tâches pseudo-cron (scripts semi-automatiques)</li>
+</ul>
 <li>Version 0.1beta2
 <ul><li>Mise à jour essentiellement corrective</li>
 </ul></li>
@@ -187,13 +191,13 @@ Conseil : Ne téléchargez pas les résultats d\'un joueur si sa situation mensu
 <li>"type_compet" - le type de compétition à afficher ex : {cms_module module=\'Ping\' action=\'par-equipes\' type_compet=\'1\'} (disponibles ds l\'onglet "Compétitions")</li>
 <li>"tour" - Indique le N° de journée officiel ex : {cms_module module=\'Ping\' action=\'par-equipes\' type_compet=\'1\' tour=\'1\'}</li></ul>
 <h3>Feuille de route</h3>
-<p>Dans cette version, il n\'est pas prévu  de permissions d\'accès particulières, l\'admin du site a tous les droits. Je pense toutefois donner une permission spécifique pour supprimer des données J\'attends vos retours à ce sujet pour éventuellement en créer.</p><p>De plus, le front office (côté internaute) est encore à ses premiers balbutiements.</p>
-<p>Néanmoins, si vous êtes sages...</p>
 <ul>
 <li>Un front-office avec des graphiques dynamiques.</li>
-<li>Des scripts pour récupérer automatiquement vos résultats (tâches cron)</li>
 <li>Des templates pour vous aider à bâtir vos propres gabarits depuis ce module</li>
 </ul>
+<h3>Scripts automatiques (pseudo-cron)</h3>
+<p>Les tâches pseudo-cron s\'éxécutent automatiquement en fonction des visites sur votre site(internautes et admins du site)<br />
+Dans la version 0.2, les scripts automatiques concernent les résultats du Spid et de la FFTT. Ils s\'éxécutent tous les jours (si visites du site). Ils récupèrent les résultats de x joueurs dont la mise à jour date de x jours. Il est donc possible de configurer ces x.</p><p>Attention, des temps de latence peuvent être observés dûs à l\'éxécution des scripts.</p>
 <h3>Support</h3>
 <ul>
 <li>Pour obtenir la dernière version en cours (avant release officielle)
@@ -217,9 +221,5 @@ module. Pour plus d\'informations, <a
 href=\"http://www.gnu.org/licenses/licenses.html#GPL\" target=\"_blank\">consultez
 la licence GNU GPL</a>.</p>
 ';
-$lang['utma'] = '156861353.1949673112.1265210769.1285941058.1286179019.190';
-$lang['utmz'] = '156861353.1286179019.190.38.utmccn=(referral)|utmcsr=cmsmadesimple.fr|utmcct=/index.php|utmcmd=referral';
-$lang['qca'] = 'P0-1075820551-1265210768764';
-$lang['utmb'] = '156861353';
-$lang['utmc'] = '156861353';
+
 ?>

@@ -6,6 +6,7 @@
 		<tr>
 			<th>Id</th>
 			<th>Date</th>
+			<th>Date</th>
 			<th>Licence </th>
 			<th>Licence</th>
 			<th>Nom</th>

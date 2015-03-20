@@ -162,7 +162,7 @@ foreach($result as $cle =>$tab)
 
 $comptage = $i;
 $status = 'Poules';
-$designation.= "Récupération de ".$comptage." rencontres de la poule ".$idpoule;
+$designation.= "Mise à jour de ".$comptage." rencontres de la poule ".$idpoule;
 $query = "INSERT INTO ".cms_db_prefix()."module_ping_recup (id, datecreated, status, designation, action) VALUES ('', ?, ?, ?, ?)";
 $action = "retrieve_poules_rencontres";
 $dbresult = $db->Execute($query, array($now,$status, $designation,$action));

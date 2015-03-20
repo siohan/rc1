@@ -27,7 +27,7 @@ class PingRecupSpidTask implements CmsRegularTask
       $last_execute = $ping->GetPreference('LastRecupSpid');
       
       // Définition de la périodicité de la tâche (24h ici)
-      if ( ($time - 60 ) >= $last_execute )//toutes les 24 heures  !!
+      if ( ($time - 24*60*60 ) >= $last_execute )//toutes les 24 heures  !!
 
       {
          return TRUE;
@@ -51,22 +51,34 @@ class PingRecupSpidTask implements CmsRegularTask
 	$db = $ping->GetDb();
 	$saison_courante = $ping->GetPreference('saison_en_cours');
 	$now = trim($db->DBTimeStamp(time()), "'");
-	$query = "SELECT j.licence FROM ".cms_db_prefix()."module_ping_recup_parties AS rp, ".cms_db_prefix()."module_ping_joueurs AS j  WHERE j.licence = rp.licence AND j.actif = '1' ";
+	$query = "SELECT date_event, idpoule,iddiv, affiche, uploaded,scorea, scoreb  FROM ".cms_db_prefix()."module_ping_poules_rencontres  WHERE cal.type_comp = tc.code_compet AND `date_event` <= NOW() AND `date_event` > NOW() - INTERVAL 7 DAY  AND scorea = 0 AND scoreB = 0ORDER BY date_event DESC ";
 	$interval = $ping->GetPreference('spid_interval');
-	$query.=" AND maj_spid < NOW()-INTERVAL ".$interval." DAY AND saison = ? ORDER BY maj_spid DESC ";
-	$limit = $ping->GetPreference('spid_nombres');
-	$query.= "LIMIT ".$limit;
+	
 	//$query = "SELECT CONCAT_WS(' ',nom,prenom) as player, licence FROM ".cms_db_prefix()."module_ping_joueurs WHERE actif='1' LIMIT 2";
 	$dbresult = $db->Execute($query,array($saison_courante));
 	if($dbresult && $dbresult->RecordCount() > 0)
 	{
 
-		//on instancie la classe et on va commencer à boucler
+		//on a deux cas
+		// 1 - il s'agit de compétitons individuelles
+		// 2 - Il s'agit de compétitons par équipes
+		
 		$service = new Service();
 
 		while ($row= $dbresult->FetchRow())
 		{
-			$licence = $row['licence'];		
+			$indivs = $row['indivs'];
+			$type_compet = $row['code_compet'];
+			
+			if($indivs == 1)
+			{
+				//il s'agit d'une compétition individuelle
+				//on récupère la liste des participant s à cette épreuve
+			}
+			else
+			{
+				//il s'agit d'une compétition par équipes
+			}		
 			//$player = $row['player'];
 
 

@@ -11,7 +11,7 @@ if (!$this->CheckPermission('Ping Use'))
 	echo $this->ShowErrors($this->Lang('needpermission'));
 	return;
 }
-debug_display($params, 'Parameters');
+//debug_display($params, 'Parameters');
 //require_once(dirname(__FILE__).'/function.calculs.php');
 $db=$gCms->GetDb();
 

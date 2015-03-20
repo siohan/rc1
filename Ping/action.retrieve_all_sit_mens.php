@@ -140,7 +140,11 @@ if ($dbresult && $dbresult->RecordCount() > 0)
 	}//fin du if is_array
 		
       }//fin du while
-//mettre le compteur de réussite d'échec
+$smarty->assign('retour',
+		$this->CreateLink($id,'admin_situation_mensuelle_tab',$returnlink));
+		
+echo $retour;
+//')//mettre le compteur de réussite d'échec
 /*
 	$this->SetMessage('Mises à jour OK');
 	$this->RedirectToAdminTab('situation');

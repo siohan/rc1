@@ -4,7 +4,7 @@ if( !isset($gCms) ) exit;
 ###                    JOURNAL                                               ###
 ##############################################################################
 
-/**/
+
 	if (isset($params['submit_massdelete']) )
   	{
      		if( isset($params['sel']) && is_array($params['sel']) && count($params['sel']) > 0 )
@@ -15,7 +15,7 @@ if( !isset($gCms) ) exit;
 	  		}
       		}
   	}
-/**/
+
 
 $db =& $this->GetDb();
 global $themeObject;
@@ -37,6 +37,7 @@ $smarty->assign('retrieve_details_rencontres',
 
 /* on fait un formulaire de filtrage des résultats*/
 $smarty->assign('formstart',$this->CreateFormStart($id,'admin_journal_tab')); 
+
 $statuslist[$this->lang('allstatus')] ='';
 $datelist[$this->Lang('alldates')] = '';
 $typeCompet = array();
@@ -51,6 +52,8 @@ if($dbresult1 && $dbresult1->RecordCount()>0)
 	while ($row = $dbresult1->FetchRow())
 		{
 			setlocale (LC_TIME, 'fr_FR'); 
+		//	$date_french = $row['datecreated'];
+			
 			$datelist[$row['datecreated']] = $row['datecreated']; 
 			$statuslist[$row['status']] = $row['status'];
 		}
@@ -87,7 +90,7 @@ $smarty->assign('formend',$this->CreateFormEnd());
 
 
 $result= array ();
-$query2= "SELECT * FROM ".cms_db_prefix()."module_ping_recup WHERE id >= 0";
+$query2= "SELECT datecreated, status FROM ".cms_db_prefix()."module_ping_recup WHERE id >= 0";
 
 	if( isset($params['submitfilter'] ))
 	{
@@ -139,7 +142,7 @@ $rowarray= array ();
 			$onerow->datecreated= $row['datecreated'];
 			$onerow->designation= $row['designation'];
 			$onerow->action= $row['action'];
-			$onerow->select = $this->CreateInputCheckbox($id,'sel[]',$row['id']);
+			//$onerow->select = $this->CreateInputCheckbox($id,'sel[]',$row['id']);
 			($rowclass == "row1" ? $rowclass= "row2" : $rowclass= "row1");
 			$rowarray[]= $onerow;
       		}

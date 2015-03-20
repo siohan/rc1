@@ -1,7 +1,7 @@
 <?php
 #-------------------------------------------------------------------------
 # Module: Ping
-# Version: 0.1beta1, Claude SIOHAN Agi webconseil
+# Version: 0.2, Claude SIOHAN Agi webconseil
 # Method: Install
 #-------------------------------------------------------------------------
 # CMS - CMS Made Simple is (c) 2008 by Ted Kulp (wishy@cmsmadesimple.org)
@@ -49,12 +49,7 @@ $sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_joueurs",
 				   $flds, 
 				   $taboptarray);
 $dict->ExecuteSQLArray($sqlarray);
-
-/*$sql = "INSERT INTO mairie_module_ping  (id_user, nom_complet, adresse, codepostal, commune, email, tranche, active)
-						VALUES ('0', 'SIOHAN Claude', '30, rue Park thomas', '29950', 'Clohars-Fouesnant', 'claude.siohan@gmail.com', 'A', '1')";
-$db->Execute($sql);
-*/
-
+#
 $dict = NewDataDictionary( $db );
 $flds= "id I(11) KEY AUTO,
         saison C(100),
@@ -137,7 +132,10 @@ $flds = "
 	licence I(11),
 	sit_mens C(200),
 	fftt I(11),
-	spid I(11)";
+	maj_fftt D,
+	spid I(11),
+	maj_spid D,
+	maj_total I(11)";
 			
 // create it. 
 $sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_recup_parties",
@@ -293,7 +291,24 @@ $sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_type_competition
 				   $flds, 
 				   $taboptarray);
 $dict->ExecuteSQLArray($sqlarray);
-
+##on insère les valeurs par défaut
+	
+	$insert_sql = "INSERT INTO ".cms_db_prefix()."module_ping_type_competitions (id, name, code_compet, coefficient,indivs) VALUES ('', ?, ?, ?, ?)";
+	$db->execute($insert_sql, array('Critérium fédéral Seniors', 'I', '1.25','1'));
+	$db->execute($insert_sql, array('Critérium fédéral Jeunes', 'J', '1.00','1'));
+	$db->execute($insert_sql, array('Chpt France par équipes masculin', '1', '1.00','0'));
+	$db->execute($insert_sql, array('Chpt France par équipes féminin', '2', '1.00','0'));
+	$db->execute($insert_sql, array('Coupe Nationale Vétérans', 'K', '0.75','0'));
+	$db->execute($insert_sql, array('Championnats de France Vétérans', 'V', '1.00','1'));
+	$db->execute($insert_sql, array('Championnat Jeunes', '+', '0.75','0'));
+	$db->execute($insert_sql, array('Championnat jeunes poussins benjamins', 'ECP', '1.25','0'));
+	$db->execute($insert_sql, array('Interclubs jeunes', 'EIJ', '0.50','0'));
+	$db->execute($insert_sql, array('Tournoi Rég - Dep', 'Z', '0.50','1'));
+	$db->execute($insert_sql, array('Tournoi National et Internat.', 'T', '0.75','1'));
+	$db->execute($insert_sql, array('Indéterminé.', 'U', '0.00','0'));
+########
+#
+#
 $dict = NewDataDictionary( $db );
 $flds = "
 	licence I(11),
@@ -327,16 +342,16 @@ $sqlarray = $dict->CreateTableSQL( cms_db_prefix()."module_ping_classement",
 				   $taboptarray);
 $dict->ExecuteSQLArray($sqlarray);
 //$db->CreateSequence(cms_db_prefix().'module_ping_type_competitions');
-
+#
 // create a sequence
 $db->CreateSequence(cms_db_prefix()."module_ping_seq");
-
+#
 // create a permission
 $this->CreatePermission('Ping Use', 'Ping Use');
 $this->CreatePermission('Ping Set Prefs','Ping Set Prefs');
 $this->CreatePermission('Ping Manage user', 'Ping Manage user');
 $this->CreatePermission('Ping Delete', 'Ping Delete');
-
+#
 // create a preference
 //$this->SetPreference("mini_trancheA', '0');
 /* les victoires normales */
@@ -349,9 +364,12 @@ $this->SetPreference('vicNorm200_299', '2');
 $this->SetPreference('vicNorm300_399', '1');
 $this->SetPreference('vicNorm400_499', '0,5');
 $this->SetPreference('vicNormPlus500', '0');
+#
+#    Pour les tâches CRON
+#
 $this->SetPreference('LastRecupSpid', '');
 $this->SetPreference('LastRecupFftt', '');
-
+#
 /* les victoires anormales */
 $this->SetPreference('vicAnorm0_24', '6');
 $this->SetPreference('vicAnorm25_49', '7');
@@ -362,7 +380,7 @@ $this->SetPreference('vicAnorm200_299', '17');
 $this->SetPreference('vicAnorm300_399', '22');
 $this->SetPreference('vicAnorm400_499', '28');
 $this->SetPreference('vicAnormPlus500', '40');
-
+#
 /* défaites normales */
 $this->SetPreference('defNorm0_24', '-5');
 $this->SetPreference('defNorm25_49', '-4,5');
@@ -373,7 +391,7 @@ $this->SetPreference('defNorm200_299', '-1');
 $this->SetPreference('defNorm300_399', '-0,5');
 $this->SetPreference('defNorm400_499', '0');
 $this->SetPreference('defNormPlus500', '0');
-
+#
 /* défaites Anormales */
 $this->SetPreference('defAnorm0_24', '-5');
 $this->SetPreference('defAnorm25_49', '-6');
@@ -391,32 +409,15 @@ $this->SetPreference('defaultMonthSitMens', '5');
 $this->SetPreference('phase', '1');
 $this->SetPreference('populate_calendar', 'Oui');
 $this->SetPreference('affiche_club_uniquement', 'Oui');
-
-
+#
+#
 #Setup events
 $this->CreateEvent('OnUserAdded');
-//$this->CreateEvent('NewsArticleEdited');
 $this->CreateEvent('OnUserDeleted');
-//$this->CreateEvent('NewsCategoryAdded');
-//$this->CreateEvent('NewsCategoryEdited');
-//$this->CreateEvent('NewsCategoryDeleted');
-
-
+#
 //on insère les éléments par défaut
-$insert_sql = "INSERT INTO ".cms_db_prefix()."module_ping_type_competitions (id, name, code_compet, coefficient) VALUES ('', ?, ?, ?, ?)";
-$res = $db->Execute($insert_sql, array('Critérium fédéral Seniors', 'I', '1.25','1'));
-$res = $db->Execute($insert_sql, array('Critérium fédéral Jeunes', 'J', '1.00','1'));
-$res = $db->Execute($insert_sql, array('Chpt France par équipes masculin', '1', '1.00','0'));
-$res = $db->Execute($insert_sql, array('Chpt France par équipes féminin', '2', '1.00','0'));
-$res = $db->Execute($insert_sql, array('Coupe Nationale Vétérans', 'K', '0.75','0'));
-$res = $db->Execute($insert_sql, array('Championnats de France Vétérans', 'V', '1.00','1'));
-$res = $db->Execute($insert_sql, array('Championnat Jeunes', '+', '0.75','0'));
-$res = $db->Execute($insert_sql, array('Championnat jeunes poussins benjamins', 'ECP', '1.25','0'));
-$res = $db->Execute($insert_sql, array('Interclubs jeunes', 'EIJ', '0.50','0'));
-$res = $db->Execute($insert_sql, array('Tournoi Rég - Dep', 'Z', '0.50','1'));
-$res = $db->Execute($insert_sql, array('Tournoi National et Internat.', 'T', '0.75','1'));
-$res = $db->Execute($insert_sql, array('Indéterminé.', 'U', '0.00','0'));
 
+#
 // put mention into the admin log
 $this->Audit( 0, 
 	      $this->Lang('friendlyname'), 

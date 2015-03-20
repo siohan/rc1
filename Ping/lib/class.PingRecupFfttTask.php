@@ -27,7 +27,7 @@ class PingRecupFfttTask implements CmsRegularTask
       $last_execute = $ping->GetPreference('LastRecupFftt');
       
       // Définition de la périodicité de la tâche (24h ici)
-      if ( ($time - 60*//60 ) >= $last_execute )//toutes les dix minutes
+      if ( ($time - 60 ) >= $last_execute )//toutes les dix minutes
       {
          return TRUE;
       }

@@ -122,11 +122,11 @@ $dbresult = $db->Execute($query, array($now, $status,$designation,$action));
 $query = "SELECT licence FROM ".cms_db_prefix()."module_ping_recup_parties WHERE licence = ?";
 $dbresult = $db->Execute($query, array($licence));
 $lignes = $dbresult->RecordCount();
-
+	$aujourdhui = date('Y-m-d');
 	if($lignes>0)
 	{
-		$query = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET fftt = ? WHERE licence = ?";
-		$dbresult = $db->Execute($query, array($compteur,$licence));
+		$query = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET fftt = ?, maj_fftt = ? WHERE licence = ?";
+		$dbresult = $db->Execute($query, array($compteur,$aujourdhui,$licence));
 	}
 	else
 	{

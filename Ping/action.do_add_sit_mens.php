@@ -11,6 +11,8 @@ $phase = $this->GetPreference('phase_en_cours');
 		$this->RedirectToAdminTab('situation');
 	}
 	$annee = date('Y');
+	$mois = date('n');
+	
 //on récupère les valeurs
 //pour l'instant pas d'erreur
 $error = 0;
@@ -42,7 +44,6 @@ $i = 0;
 		if (isset($params['month']) && $params['month'] != '')
 		{
 			$month = $params['month'];
-			
 		}
 		
 		else
@@ -58,8 +59,23 @@ $i = 0;
 		foreach($month as $key=>$value)
 		{
 			
+		if($phase ==1)
+		{
+			$annee_ref = $annee;
+		}
+		elseif($phase ==2)
+		{
+			if($key >=9 && $key <=12)
+			{
+				$annee_ref = $annee-1;
+			}
+			else
+			{
+				$annee_ref = $annee;
+			}
+		}
 			$query = "SELECT mois, annee, licence FROM ".cms_db_prefix()."module_ping_sit_mens WHERE licence = ? AND mois = ? AND annee = ?";
-			$dbresult = $db->Execute($query, array($licence,$key,$annee));
+			$dbresult = $db->Execute($query, array($licence,$key,$annee_ref));
 			
 				if($dbresult && $dbresult->RecordCount()==0)
 				{
@@ -69,7 +85,8 @@ $i = 0;
 					{
 						
 					$query2 = "INSERT INTO ".cms_db_prefix()."module_ping_sit_mens (id, datecreated, datemaj, mois, annee, phase, licence, nom, prenom, points) VALUES ('', ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-					$dbresultat = $db->Execute($query2, array($now, $now, $key, $annee, $phase, $licence,$nom, $prenom,$value));
+					//echo $query2;
+					$dbresultat = $db->Execute($query2, array($now, $now, $key, $annee_ref, $phase, $licence,$nom, $prenom,$value));
 					$i++;
 					}
 				}
