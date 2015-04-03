@@ -11,7 +11,8 @@ $db =& $this->GetDb();
 global $themeObject;
 $this->SetCurrentTab('results');
 /* on fait un formulaire de filtrage des résultats*/
-$smarty->assign('formstart',$this->CreateFormStart($id,'admin_spid_tab')); 
+//$smarty->assign('formstart',$this->CreateFormStart($id,'defaultadmin','', 'post', '',false,'',array('active_tab'=>'spid')));
+$smarty->assign('formstart',$this->CreateFormStart($id,'admin_spid_tab'));
 //$saisonslist[$this->lang('allseasons')] ='';
 $datelist[$this->Lang('alltours')] = '';
 //$allequipes =  ( isset( $params['allequipes'] )?$params['allequipes']:'no');
@@ -85,7 +86,7 @@ $smarty->assign('formend',$this->CreateFormEnd());
 $result= array ();
 //$query= "SELECT * FROM ".cms_db_prefix()."module_ping_points WHERE joueur = ? ORDER BY id ASC";
 //$query = "SELECT type_compet, joueur, sum(vic_def) AS victoires, sum(points) AS total, count(*) AS sur FROM ".cms_db_prefix()."module_ping_points  GROUP BY joueur,type_compet ORDER BY joueur,type_compet";
-$query = "SELECT sp.id AS record_id,CONCAT_WS(' ',j.nom, j.prenom) AS joueur, sp.date_event, sp.epreuve, sp.nom AS name, sp.classement, sp.victoire, sp.ecart, sp.coeff, sp.pointres, sp.forfait FROM ".cms_db_prefix()."module_ping_joueurs AS j, ".cms_db_prefix()."module_ping_parties_spid AS sp  WHERE j.licence = sp.licence AND sp.saison = ? ";//"  GROUP BY joueur,type_compet ORDER BY joueur,type_compet";
+$query2 = "SELECT sp.id AS record_id,CONCAT_WS(' ',j.nom, j.prenom) AS joueur, sp.date_event, sp.epreuve, sp.nom AS name, sp.classement, sp.victoire, sp.ecart, sp.coeff, sp.pointres, sp.forfait FROM ".cms_db_prefix()."module_ping_joueurs AS j, ".cms_db_prefix()."module_ping_parties_spid AS sp  WHERE j.licence = sp.licence AND sp.saison = ? ";//"  GROUP BY joueur,type_compet ORDER BY joueur,type_compet";
 
 $parms['saison'] = $saison;//si le filtre a été soumis
 
@@ -93,42 +94,42 @@ if( isset($params['submitfilter'] ))
 {
 	if ($curdate !='')
 	{
-		$query .=" AND sp.date_event = ? ";
+		$query2.=" AND sp.date_event = ? ";
 		$parms['date_event'] = $curdate;
 		
 	}
 
 	if ($curplayer !='')
 	{
-		$query .=" AND sp.licence = ?";
+		$query2.=" AND sp.licence = ?";
 		$parms['licence'] = $curplayer;
 		
 	}
 	
 	if ($curCompet !='')
 	{
-		$query.=" AND sp.epreuve = ?";
+		$query2.=" AND sp.epreuve = ?";
 		$parms['epreuve'] = $curCompet;
 	}
 	if($params['error_only'])
 	{
-		$query.=" AND sp.classement = -sp.ecart ";
+		$query2.=" AND sp.classement = -sp.ecart ";
 	}
 
 }
 
 
 
-$query.=" ORDER BY joueur ASC, sp.date_event ASC";
+$query2.=" ORDER BY joueur ASC, sp.date_event ASC";
 
 
-$dbresult= $db->Execute($query, $parms);
-//echo $query;
+$dbresult2= $db->Execute($query2, $parms);
+//echo $query2;
 $rowclass= 'row1';
 $rowarray= array ();
-if ($dbresult && $dbresult->RecordCount() > 0)
+if ($dbresult2 && $dbresult2->RecordCount() > 0)
   {
-    while ($row= $dbresult->FetchRow())
+    while ($row= $dbresult2->FetchRow())
       {
 	$onerow= new StdClass();
 	$onerow->rowclass= $rowclass;

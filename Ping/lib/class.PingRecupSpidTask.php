@@ -27,7 +27,7 @@ class PingRecupSpidTask implements CmsRegularTask
       $last_execute = $ping->GetPreference('LastRecupSpid');
       
       // Définition de la périodicité de la tâche (24h ici)
-      if ( ($time - 60 ) >= $last_execute )//toutes les 24 heures  !!
+      if ( ($time - 30*60 ) >= $last_execute )//toutes les 24 heures  !!
 
       {
          return TRUE;

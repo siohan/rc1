@@ -203,6 +203,7 @@ case "0.1.1" :
 	}
 	
 case "0.2" :
+case "0.2.1" :
 	{
 		$dict = NewDataDictionary($db);
 		$sqlarray = $dict->AddColumnSQL(cms_db_prefix()."module_ping_recup_parties", "maj_fftt D");

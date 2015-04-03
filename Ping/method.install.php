@@ -306,6 +306,9 @@ $dict->ExecuteSQLArray($sqlarray);
 	$db->execute($insert_sql, array('Tournoi Rég - Dep', 'Z', '0.50','1'));
 	$db->execute($insert_sql, array('Tournoi National et Internat.', 'T', '0.75','1'));
 	$db->execute($insert_sql, array('Indéterminé.', 'U', '0.00','0'));
+	$db->Execute($insert_sql, array('Championnats de France Corpo.','E','1.00','1'));
+	$db->Execute($insert_sql, array('Finales par classement', 'H', '1.25','1'));
+	$db->Execute($insert_sql, array('Championnat par équipes corpo','3','0.75','0'));
 ########
 #
 #

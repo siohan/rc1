@@ -25,7 +25,7 @@ if (FALSE == empty($params['active_tab']))
 	
 	echo $this->SetTabHeader('poules', 'Résultats', ('Résultats' == $tab)?true:false);
 	echo $this->SetTabHeader('recup', 'Recupération', ('Récupération' == $tab)?true:false);
-	echo $this->SetTabHeader('situation', 'Situation mensuelle', ('Situation mensuelle' == $tab)?true:false);
+	echo $this->SetTabHeader('situation', 'Situation mensuelle', ('situation' == $tab)?true:false);
 	echo $this->SetTabHeader('journal', 'Journal', ('Journal' == $tab)?true:false);
 	
 	if($this->CheckPermission('Ping Set Prefs')){

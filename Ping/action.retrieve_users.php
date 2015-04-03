@@ -61,6 +61,14 @@ foreach($result as $cle =>$tab)
 			$action = "retrieve_users";
 			ping_admin_ops::ecrirejournal($now,$status,$designation,$action);
 		}
+		
+		//on fait l'ajout dans la table table_recup
+		// on part du principe que si le joueur n'existe pas dans la table joueurs alors il n'existe pas non plus ailleurs
+		$fftt = 0;
+		$spid = 0;
+		$query2 ="INSERT INTO ".cms_db_prefix()."module_ping_recup_parties (id,saison,datemaj,licence, sit_mens, fftt, spid) VALUES ('', ?, ?, ?, ?, ?, ?)";
+		$result = $db->Execute($query2, array($saison, $now, $licence, $sit_mens, $fftt, $spid));
+		
 	}		
 	$sit_mens = '';	
 	//on réalise aussi une inclusion dans la table des situations mensuelles
@@ -79,12 +87,7 @@ foreach($result as $cle =>$tab)
 		
 		
 	}
-	//on fait l'ajout dans la table table_recup
 	
-	$fftt = 0;
-	$spid = 0;
-	$query2 ="INSERT INTO ".cms_db_prefix()."module_ping_recup_parties (id,saison,datemaj,licence, sit_mens, fftt, spid) VALUES ('', ?, ?, ?, ?, ?, ?)";
-	$result = $db->Execute($query2, array($saison, $now, $licence, $sit_mens, $fftt, $spid));
 		
 }// fin du foreach
 

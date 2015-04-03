@@ -36,8 +36,8 @@ $smarty->assign('retrieve_details_rencontres',
 		$this->CreateLink($id, 'retrieve_club', $returnid, $contents = 'Récupérations du détail des rencontres'));
 
 /* on fait un formulaire de filtrage des résultats*/
-$smarty->assign('formstart',$this->CreateFormStart($id,'admin_journal_tab')); 
-
+//$smarty->assign('formstart',$this->CreateFormStart($id,'defaultadmin','', 'post', '',false,'',array('active_tab'=>'journal')));
+$smarty->assign('formstart', $this->CreateFormStart($id, 'admin_journal_tab'));
 $statuslist[$this->lang('allstatus')] ='';
 $datelist[$this->Lang('alldates')] = '';
 $typeCompet = array();
@@ -52,8 +52,6 @@ if($dbresult1 && $dbresult1->RecordCount()>0)
 	while ($row = $dbresult1->FetchRow())
 		{
 			setlocale (LC_TIME, 'fr_FR'); 
-		//	$date_french = $row['datecreated'];
-			
 			$datelist[$row['datecreated']] = $row['datecreated']; 
 			$statuslist[$row['status']] = $row['status'];
 		}
@@ -90,7 +88,7 @@ $smarty->assign('formend',$this->CreateFormEnd());
 
 
 $result= array ();
-$query2= "SELECT datecreated, status FROM ".cms_db_prefix()."module_ping_recup WHERE id >= 0";
+$query2= "SELECT * FROM ".cms_db_prefix()."module_ping_recup WHERE id >= 0";
 
 	if( isset($params['submitfilter'] ))
 	{

@@ -537,7 +537,7 @@ public static function array_code_compet($type_compet)
 	//echo $lignes."<br />";
 	//echo $row4[1][licence];
 	$lic = array();
-
+	$i=0;
 
 	for($i=0;$i<=$lignes;$i++)
 	{
@@ -805,6 +805,7 @@ public function retrieve_parties_spid( $licence )
 	//echo "glop2";
 	$saison_courante = $ping->GetPreference('saison_en_cours');
 	$now = trim($db->DBTimeStamp(time()), "'");
+	$aujourdhui = date('Y-m-d');
 	$query = "SELECT CONCAT_WS(' ', nom, prenom) AS player FROM ".cms_db_prefix()."module_ping_joueurs WHERE licence = ?";
 	$dbretour = $db->Execute($query, array($licence));
 	if ($dbretour && $dbretour->RecordCount() > 0)
@@ -842,6 +843,13 @@ public function retrieve_parties_spid( $licence )
 				$designation = $message;
 				$action = "mass_action";
 				ping_admin_ops::ecrirejournal($now,$status, $designation,$action);
+				
+				if($lignes == $number)
+				{
+					$query4 = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET maj_spid = ? WHERE licence = ? AND saison = ?";
+					$dbresult4 = $db->Execute($query4,array($aujourdhui,$licence,$saison_courante));
+				}
+				
 				
 			}
 			else
@@ -1086,7 +1094,7 @@ public function retrieve_parties_spid( $licence )
 					}//fin du if si la sit mens du joueur du club est dûment renseignée
 
 				}//fin du foreach
-				$aujourdhui = date('Y-m-d');
+				
 				$comptage = $i;
 				$query4 = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET maj_spid = ?, spid = ?,spid_total = ? WHERE licence = ? AND saison = ?";
 				$dbresult4 = $db->Execute($query4,array($aujourdhui,$comptage,$compteur,$licence,$saison_courante));
@@ -1104,7 +1112,7 @@ public function retrieve_parties_spid( $licence )
 		}//fin du while
 	}//fin du if dbretour >0
 
-return $designation;
+
 
 
 
@@ -1127,6 +1135,7 @@ public static function retrieve_parties_fftt( $licence )
 	//require_once(dirname(__FILE__).'/function.calculs.php');
 	$saison_courante = $ping->GetPreference('saison_en_cours');
 	$now = trim($db->DBTimeStamp(time()), "'");
+	$aujourdhui = date('Y-m-d');
 	$query = "SELECT CONCAT_WS(' ', nom, prenom) AS player FROM ".cms_db_prefix()."module_ping_joueurs WHERE licence = ?";
 	$dbretour = $db->Execute($query, array($licence));
 	if ($dbretour && $dbretour->RecordCount() > 0)
@@ -1236,7 +1245,7 @@ public static function retrieve_parties_fftt( $licence )
 					}//fin du if recordCount() ligne 244
 
 				}//fin du foreach
-				$aujourdhui = date('Y-m-d');
+				
 				$comptage = $i;
 				$query4 = "UPDATE ".cms_db_prefix()."module_ping_recup_parties SET maj_fftt = ?,fftt = ? WHERE licence = ? AND saison = ?";
 				$dbresult4 = $db->Execute($query4, array($aujourdhui,$comptage,$licence,$saison_courante));

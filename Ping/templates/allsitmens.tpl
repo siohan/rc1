@@ -1,3 +1,4 @@
+{*<pre>{$items|var_dump}</pre>*}
 <div class="pageoptions"><p class="pageoptions">{$itemcount}&nbsp;{$itemsfound} | {$retrieveallsitmens} | {$addallsitmenslink}</p></div>
 {if isset($formstart) }
 <fieldset>

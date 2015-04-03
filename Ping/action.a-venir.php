@@ -1,6 +1,9 @@
 <?php
 #####################################################################
 ###                  To come                                      ###
+###    Cette page affiche les prochaines compétitions à venir     ###
+## Params intervalle de temps                                     ###
+## Params limit pour limiter le nb de résultats                   ###
 #####################################################################
 //les compétitions à venir
 if(!isset($gCms)) exit;
